@@ -5,8 +5,10 @@ module.factory('Game', function()
       *Class we need for the game
       *@param items {Array} with the items the game consisted of
       *@param time {Int} How many seconds tis the duration of game
+      *@param grid_width How many Items each row will have
+      *@param grid_height How many items the grid will have vertically
       */
-      function Game(items,time,callbacks)
+      function Game(items,time,grid_width,grid_height,callbacks)
       {
         var game=this;
 
