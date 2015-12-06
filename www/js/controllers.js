@@ -3,7 +3,11 @@ angular.module('starter.controllers', [])
 /**
 *Controller for the First Page
 */
-.controller('Home',function($scope){})
+.controller('Home',function($scope,Main)
+{
+  $scope.content=Main.content;
+  $scope.buttonText=Main.button;
+})
 
 /**
 *Controller for main menu
@@ -17,6 +21,10 @@ angular.module('starter.controllers', [])
 *Controller that does all the Dirty Job for the Game
 */
 .controller('Game',function($scope,Game)
+{
+
+})
+.controller('Pause',function($scope)
 {
 
 });

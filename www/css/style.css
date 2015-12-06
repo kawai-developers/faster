@@ -1,1 +1,22 @@
 /* Empty. Add your own CSS if you like */
+
+.center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.text-center{
+  text-alighn:center!important;
+}
+.main {
+  background: url("../img/bg-texture-dark.png")!important;
+}
+
+.main-blue{
+  width:90%;
+  min-height:90%;
+  background-color:blue;
+  color:rgb(254,254,254);
+  font-size: 3em;
+}

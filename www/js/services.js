@@ -40,7 +40,14 @@ module.factory('Game', function()
         }
 
         /*####################### Starting apausing and overing the game #############*/
-        game.status='over';
+        /**
+        *The Game has the Foillowing Status
+        *'uninitialised': When the game has Not Been Started yet
+        *'play': When gameplay is on progress
+        *'paused': When the game is paused
+        *'over': When Game Over
+        */
+        game.status='uninitialised';
         game.timer=time;
 
         /**
@@ -74,7 +81,6 @@ module.factory('Game', function()
               {
                 game.timer--;
                 if(game.timer==0) game.over();
-
                 if(typeof callbacks === 'object' && typeof callbacks['timerUpdate'] === 'function') callbacks['timerUpdate'](game.timer);
               }
             },100000);
@@ -126,7 +132,7 @@ module.factory('Game', function()
       /**
       *Function we need for the Game Item
       */
-      function GameItem(icon,icon_destroyed,name)
+      function GameItem(icon,icon_destroyed,icon_marked,name)
       {
         var item=this;
 
@@ -186,5 +192,17 @@ module.factory('Game', function()
         }
       };//End of Item Class
 
-      return {game:Game,item:Item};
+      return {
+              game:Game,
+              item:Item,
+              cunnent_game:null
+             };
 });
+
+module.factory('Main',function()
+{
+  return {
+           content:"Can YOU arrive at your destination fast enough by choosing the best means of tranport?\nPrepare for the fastest and most exciting riddle game that will keep you company on your every outing!",
+           button:"continue",
+          };
+})
