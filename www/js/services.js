@@ -1,4 +1,4 @@
-var module=angular.module('starter.services', ['ionic']);
+var module=angular.module('starter.services', []);
 module.factory('Game', function()
 {
       /**
@@ -36,7 +36,7 @@ module.factory('Game', function()
         {
 
           //Possibly may needed to call
-          //game.start();
+          game.start();
         }
 
         /*####################### Starting apausing and overing the game #############*/
@@ -71,20 +71,28 @@ module.factory('Game', function()
         */
         game.start=function()
         {
+          console.log("Game Started");
           game.status='play';
 
           //Start the counter
-          if(typeof interval !== 'undefined' && interval!==null)
+          if(typeof interval === 'undefined' || interval===null)
           {
+            console.log("Set Interval");
             interval=setInterval(function()
             {
               if(game.status==='play')
               {
                 game.timer--;
                 if(game.timer==0) game.over();
-                if(typeof callbacks === 'object' && typeof callbacks['timerUpdate'] === 'function') callbacks['timerUpdate'](game.timer);
+                console.log(typeof callbacks);
+                console.log(typeof callbacks['timerUpdate']);
+                if(typeof callbacks === 'object' && typeof callbacks['timerUpdate'] === 'function')
+                {
+                  console.log('Here');
+                  callbacks['timerUpdate'](game.timer);
+                }
               }
-            },100000);
+            },1000);
           }
         }
 
@@ -201,7 +209,7 @@ module.factory('Game', function()
       return {
               game:Game,
               item:GameItem,
-              cunnent_game:null
+              current_game:null
              };
 });
 
