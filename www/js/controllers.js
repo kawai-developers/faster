@@ -16,13 +16,23 @@ angular.module('starter.controllers', ['ionic'])
 /**
 *Controller that does all the Dirty Job for the Game
 */
-.controller('Game',function($scope,$interval,Game)
+.controller('Game',function($scope,$interval,$ionicModal,Game)
 {
-  console.log("Entered Game");
-  console.log(Game.current_game);
 
+  /*################### Controller Initialization ####################*/
   var GameItem=Game.item;
   var GameClass=Game.game;
+
+  $ionicModal.fromTemplateUrl('modals/pausedGame-modal.html',{
+     scope:$scope,
+     animation: 'slide-in-up'
+  })
+  .then(function(modal)
+  {
+      console.log("Init Modal");
+      $scope.pauseMenu = modal;
+  });
+  /*##################### End Controller Initialization ##############*/
 
   /**
   *Items for the Game
@@ -40,7 +50,6 @@ angular.module('starter.controllers', ['ionic'])
   var callbacks={
                   'timerUpdate':function(time)
                   {
-                    console.log(time);
                     $interval(function(){$scope.time=time;});
                   },
                   'pause':function(time)
@@ -58,17 +67,19 @@ angular.module('starter.controllers', ['ionic'])
 
   $scope.pause=function()
   {
-    console.log("Pauseing Game");
+    console.log("Pausing Game");
     Game.current_game.pause();
+    $scope.pauseMenu.show();
   }
 
   $scope.continue=function()
   {
     Game.current_game.play();
+    $scope.pauseMenu.hide();
   }
 
-})
-.controller('Pause',function($scope)
-{
-
+  $scope.$on('$destroy', function()
+  {
+    $scope.modal.remove();
+  });
 });

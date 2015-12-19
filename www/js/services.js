@@ -77,18 +77,15 @@ module.factory('Game', function()
           //Start the counter
           if(typeof interval === 'undefined' || interval===null)
           {
-            console.log("Set Interval");
             interval=setInterval(function()
             {
               if(game.status==='play')
               {
                 game.timer--;
                 if(game.timer==0) game.over();
-                console.log(typeof callbacks);
-                console.log(typeof callbacks['timerUpdate']);
+
                 if(typeof callbacks === 'object' && typeof callbacks['timerUpdate'] === 'function')
                 {
-                  console.log('Here');
                   callbacks['timerUpdate'](game.timer);
                 }
               }
