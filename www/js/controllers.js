@@ -12,16 +12,13 @@ angular.module('starter.controllers', [])
 /**
 *Controller for main menu
 */
-.controller('Menu',function($scope)
-{
-  console.log("Menu Called");
-  $scope.items=[];
-})
+.controller('Menu',function($scope,MenuItem){})
 /**
 *Controller that does all the Dirty Job for the Game
 */
 .controller('Game',function($scope,Game)
 {
+  console.log("GAme Started");
 
 })
 .controller('Pause',function($scope)

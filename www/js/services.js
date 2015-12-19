@@ -166,7 +166,7 @@ module.factory('Game', function()
         item.equals=function(other)
         {
           return other.name===item.name;
-        }
+        };
 
         /**
         *Gets The icon regarding the status of the Item is
@@ -194,15 +194,40 @@ module.factory('Game', function()
 
       return {
               game:Game,
-              item:Item,
+              item:GameItem,
               cunnent_game:null
              };
 });
 
+/**
+*Content for main Page
+*In order to avoid it from setting it into Html content
+*/
 module.factory('Main',function()
 {
   return {
            content:"Can YOU arrive at your destination fast enough by choosing the best means of tranport?\nPrepare for the fastest and most exciting riddle game that will keep you company on your every outing!",
            button:"continue",
           };
+});
+
+module.factory('MenuItem',function()
+{
+    /**
+    *Class for menu Item
+    *@param text {String} Text for the menu item
+    *@param class_ {String} CSS class for the item
+    *@param icon {String} Path for button Icon
+    *@param font {Boolean} Whether the icon will be a webfont or not
+    */
+   function MenuItem(text,class_,icon,icon_font)
+   {
+      var item=this;
+      item.name=name;
+      item.class=class_;
+      item.icon=icon;
+      item.icon_font=icon_font;
+   };
+
+   return MenuItem;
 })

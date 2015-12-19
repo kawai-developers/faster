@@ -20,3 +20,12 @@
   color:rgb(254,254,254);
   font-size: 3em;
 }
+
+.general_button {
+	background:transparent;
+	border:none;
+	cursor:pointer;
+	outline:none;
+	display:block;
+	margin: auto;
+}
