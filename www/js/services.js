@@ -1,4 +1,4 @@
-var module=angular.module('starter.services', []);
+var module=angular.module('starter.services', ['ionic']);
 module.factory('Game', function()
 {
       /**
@@ -62,6 +62,7 @@ module.factory('Game', function()
         game.pause=function()
         {
           game.status='paused';
+          if(typeof callbacks === 'object' && typeof callbacks['pause'] === 'function') callbacks['pause'](game.timer);
         }
 
         /**
@@ -104,7 +105,7 @@ module.factory('Game', function()
 
         game.isPaused=function()
         {
-          return game.status==='over';
+          return game.status==='paused';
         }
 
         game.isNotPausedOrOver=function()
@@ -131,6 +132,9 @@ module.factory('Game', function()
 
       /**
       *Function we need for the Game Item
+      *@param icon {String} Normal Icon For the Item (it can be either html or image path)
+      *@param icon_destroyed {String} Icon when The Game is Destroyed (it can be either html or image path)
+      *@param icon_marked {String}
       */
       function GameItem(icon,icon_destroyed,icon_marked,name)
       {
@@ -138,7 +142,9 @@ module.factory('Game', function()
 
         item.icon=icon;//Icon for the normal situations
 
-        item.icon_destroyed=icon_destroyed//Icon if the item is Destroyed
+        item.icon_destroyed=icon_destroyed;//Icon if the item is Destroyed
+
+        item.icon_marked=icon_marked;//Icon when the item is selected
 
         /*
         *A Characteristic name of the item
