@@ -1,4 +1,4 @@
-var module=angular.module('starter.services', []);
+var module=angular.module('starter.services', ['ionic', 'ui.router']);
 module.factory('Game', function()
 {
       /**
@@ -18,6 +18,7 @@ module.factory('Game', function()
         //The grid of the items that will be swapped
         game.grid=[];
 
+        game.callbacks=callbacks;
         /**
         *Function that performs the logic
         *and does the comparisons between Items
@@ -36,7 +37,8 @@ module.factory('Game', function()
         {
 
           //Possibly may needed to call
-          game.start();
+          if(typeof game.callbacks === 'object' && typeof game.callbacks['afterInit'] === 'function') game.callbacks['afterInit'](game);
+          game.play();
         }
 
         /*####################### Starting apausing and overing the game #############*/
@@ -62,14 +64,15 @@ module.factory('Game', function()
         game.pause=function()
         {
           game.status='paused';
-          if(typeof callbacks === 'object' && typeof callbacks['pause'] === 'function') callbacks['pause'](game.timer);
+          console.log(game.callbacks['pause'] );
+          if(typeof game.callbacks === 'object' && typeof game.callbacks['pause'] === 'function') game.callbacks['pause'](game.timer);
         }
 
         /**
         *Method that starts the game
         *Enter code here to be executer when the game is started
         */
-        game.start=function()
+        game.play=function()
         {
           console.log("Game Started");
           game.status='play';
@@ -81,12 +84,13 @@ module.factory('Game', function()
             {
               if(game.status==='play')
               {
+                console.log(game.timer);
                 game.timer--;
                 if(game.timer==0) game.over();
 
-                if(typeof callbacks === 'object' && typeof callbacks['timerUpdate'] === 'function')
+                if(typeof game.callbacks === 'object' && typeof game.callbacks['timerUpdate'] === 'function')
                 {
-                  callbacks['timerUpdate'](game.timer);
+                  game.callbacks['timerUpdate'](game.timer);
                 }
               }
             },1000);
@@ -133,6 +137,19 @@ module.factory('Game', function()
         }
         /*#####################################################################*/
 
+        /*########### Functions for Game Saving and Loading ###################*/
+        game.save=function()
+        {
+          console.log("Game Saving");
+          //Code for game saving
+        }
+
+        game.load=function()
+        {
+          //Code for game loading
+        }
+        /*########### End of Functions ddor Game saving and Loading ###########*/
+
       };//End Of Game Class
 
       /**
@@ -146,13 +163,11 @@ module.factory('Game', function()
         var item=this;
 
         item.icon=icon;//Icon for the normal situations
-
         item.icon_destroyed=icon_destroyed;//Icon if the item is Destroyed
-
         item.icon_marked=icon_marked;//Icon when the item is selected
 
         /*
-        *A Characteristic name of the item
+        *A Characteristic name of the itemYourFactory
         *It can Be used for comparisons ;)
         */
         item.name=name;
@@ -222,7 +237,10 @@ module.factory('Main',function()
           };
 });
 
-module.factory('MenuItem',function()
+/**
+*Data For Main Menu
+*/
+module.factory('MenuItem',function($state)
 {
     /**
     *Class for menu Item
@@ -230,15 +248,34 @@ module.factory('MenuItem',function()
     *@param class_ {String} CSS class for the item
     *@param icon {String} Path for button Icon
     *@param font {Boolean} Whether the icon will be a webfont or not
+    *@param clickFunction {Function} Of What to Be called when the Button Is Clicked
     */
-   function MenuItem(text,class_,icon,icon_font)
+   function MenuItem(name,class_,icon,icon_font,clickFunction)
    {
+     console.log("Item Made");
       var item=this;
-      item.name=name;
+      item.name_=name;
       item.class=class_;
-      item.icon=icon;
       item.icon_font=icon_font;
+
+      //Generate the html to show the image
+      if(!icon_font) icon="<img src=\""+icon+"\">"
+
+      item.icon=icon;
+      item.clickFunction=clickFunction;
    };
 
-   return MenuItem;
+   var items={
+                'play': new MenuItem('Play','play-btn',"<i class=\"fa fa-play\"></i>",true,function()
+                {
+                  $state.go('game');
+                }),
+                'others':[],
+             };
+
+
+   return {
+            'MenuItem':MenuItem,
+            'items':items
+          };
 })

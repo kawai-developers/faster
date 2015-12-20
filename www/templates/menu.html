@@ -1,5 +1,8 @@
 <ion-view class="main">
+  <ion-nav-bar class="bar-positive">
+    <ion-nav-back-button ng-click="back()"><i class="ion-arrow-left-c"></i>Back To Original Screen</ion-nav-back-button>
+  </ion-nav-bar>
   <ion-content class="center">
-      <a href="#/game">Play</a>
+      <button class="button {{play.class}}" ng-click="play.clickFunction()">{{play.name_}}<span ng-bind-html-unsafe="{{play.icon}}"></span></button>
   </ion-content>
 </ion-view>
