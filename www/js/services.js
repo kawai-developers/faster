@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 var module=angular.module('starter.services', ['ionic', 'ui.router']);
-module.factory('Game', function()
+module.factory('Game', function($interval)
 {
       /**
       *Class we need for the game
@@ -24,7 +24,7 @@ module.factory('Game', function()
       *@param grid_width How many Items each row will have
       *@param grid_height How many items the grid will have vertically
       */
-      function Game(items,time,grid_width,grid_height,callbacks)
+      function Game(items,time,grid_width,grid_height,callbacks,scope)
       {
         var game=this;
 
@@ -35,6 +35,9 @@ module.factory('Game', function()
         game.grid=[];
 
         game.callbacks=callbacks;
+
+        game.scope=scope;
+
         /**
         *Function that performs the logic
         *and does the comparisons between Items
@@ -51,8 +54,7 @@ module.factory('Game', function()
         */
         game.init=function()
         {
-
-          //Possibly may needed to call
+          game.timer=time;
           if(typeof game.callbacks === 'object' && typeof game.callbacks['afterInit'] === 'function') game.callbacks['afterInit'](game);
           game.play();
         }
@@ -66,7 +68,42 @@ module.factory('Game', function()
         *'over': When Game Over
         */
         game.status='uninitialised';
+
+
         game.timer=time;
+
+        /**
+        *Function that starts the timer
+        */
+        var startTimer=function()
+        {
+          if(game.timer>0)
+          {
+            //Better to Use Angular's Interval
+            interval=$interval(function()
+            {
+              if(game.status==='play')
+              {
+                game.timer--;
+                if(game.timer==0) game.over();
+
+                if(typeof game.callbacks === 'object' && typeof game.callbacks['timerUpdate'] === 'function')
+                {
+                  game.callbacks['timerUpdate'](game.timer,game.scope);
+                }
+              }
+            },1000);
+          }
+        }
+
+        /**
+        *Function that stops the timer
+        */
+        var stopTimer=function()
+        {
+          if(interval!==null) $interval.cancel(interval);
+        }
+
 
         /**
         *The Interval of the setInterval();
@@ -80,9 +117,10 @@ module.factory('Game', function()
         game.pause=function()
         {
           game.status='paused';
-          console.log(game.callbacks['pause'] );
           if(typeof game.callbacks === 'object' && typeof game.callbacks['pause'] === 'function') game.callbacks['pause'](game.timer);
+          stopTimer();
         }
+
 
         /**
         *Method that starts the game
@@ -94,23 +132,7 @@ module.factory('Game', function()
           game.status='play';
 
           //Start the counter
-          if(typeof interval === 'undefined' || interval===null)
-          {
-            interval=setInterval(function()
-            {
-              if(game.status==='play')
-              {
-                console.log(game.timer);
-                game.timer--;
-                if(game.timer==0) game.over();
-
-                if(typeof game.callbacks === 'object' && typeof game.callbacks['timerUpdate'] === 'function')
-                {
-                  game.callbacks['timerUpdate'](game.timer);
-                }
-              }
-            },1000);
-          }
+          startTimer();
         }
 
         /**
@@ -120,7 +142,7 @@ module.factory('Game', function()
         game.over=function()
         {
           game.status='over';
-          if(interval!==null) clearInterval(interval);
+          if(interval!==null) $interval.cancel(interval);
         }
 
         game.isOver=function()

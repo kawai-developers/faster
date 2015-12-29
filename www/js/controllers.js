@@ -44,7 +44,7 @@ angular.module('starter.controllers', ['ionic','ui.router'])
 /**
 *Controller that does all the Dirty Job for the Game
 */
-.controller('Game',function($scope,$interval,$state,Game,MenuItem)
+.controller('Game',function($scope,$timeout,$state,Game,MenuItem)
 {
 
   /*################### Controller Initialization ####################*/
@@ -74,9 +74,10 @@ angular.module('starter.controllers', ['ionic','ui.router'])
       *Callbacks for Game
       */
       var callbacks={
-                      'timerUpdate':function(time)
+                      'timerUpdate':function(time,scope)
                       {
-                        $interval(function(){$scope.time=time;});
+                        console.log(time);
+                        $timeout(function(){scope.time=time;});
                       },
                       'pause':function(time)
                       {
@@ -104,7 +105,7 @@ angular.module('starter.controllers', ['ionic','ui.router'])
                       }
                     };
 
-      Game.current_game=new GameClass(items,60,5,10,callbacks);
+      Game.current_game=new GameClass(items,60,5,10,callbacks,$scope);
       Game.current_game.init();
     }
     else // We may need to go to another page and return Therefore we must need a way to resume
