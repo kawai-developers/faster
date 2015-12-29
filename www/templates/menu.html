@@ -3,6 +3,11 @@
     <ion-nav-back-button ng-click="back()"><i class="ion-arrow-left-c"></i>Back To Original Screen</ion-nav-back-button>
   </ion-nav-bar>
   <ion-content class="center">
-      <button class="button {{play.class}}" ng-click="play.clickFunction()">{{play.name_}}<span ng-bind-html-unsafe="{{play.icon}}"></span></button>
-  </ion-content>
+  <button class="button {{play.class}}" ng-click="play.clickFunction()">{{play.name_}}<span ng-bind-html-unsafe="{{play.icon}}"></span></button>
+
+  <div ng-repeat="other in others">
+    <button class="button {{other.class}}" ng-click="other.clickFunction()">{{play.name_}}<span ng-bind-html-unsafe="{{other.icon}}"></span></button>
+  </div>
+</ion-content>
+
 </ion-view>

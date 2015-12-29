@@ -76,7 +76,7 @@ angular.module('starter.controllers', ['ionic','ui.router'])
                         };
 
                         /*Making An Option For saving*/
-                        var saveItem=new MenuItem.MenuItem("Save",'regular-btn',"",false,function()
+                        var saveItem=new MenuItem.MenuItem("Save Game",'regular-btn',"",false,function()
                         {
                           game.save();
                         });
