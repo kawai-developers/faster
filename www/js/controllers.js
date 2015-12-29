@@ -34,6 +34,8 @@ angular.module('starter.controllers', ['ionic','ui.router'])
   $scope.play=items.play;
   $scope.others=items.others;
 
+  console.log($scope.others);
+
   $scope.back=function()
   {
     $state.go("home");
@@ -98,6 +100,7 @@ angular.module('starter.controllers', ['ionic','ui.router'])
                         });
                         //Add on the top an Option to save the game
                         MenuItem.items.others.unshift(saveItem);
+                        console.log(MenuItem.items.others);
                       }
                     };
 
