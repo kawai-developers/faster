@@ -118,7 +118,7 @@ module.factory('Game', function($interval)
         {
           game.status='paused';
           if(typeof game.callbacks === 'object' && typeof game.callbacks['pause'] === 'function') game.callbacks['pause'](game.timer);
-          stopTimer();
+          //stopTimer();
         }
 
 

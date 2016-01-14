@@ -76,8 +76,11 @@ angular.module('starter.controllers', ['ionic','ui.router'])
       var callbacks={
                       'timerUpdate':function(time,scope)
                       {
-                        console.log(time);
-                        $timeout(function(){scope.time=time;});
+                        $timeout(function()
+                        {
+                          $scope.time=time;
+                          console.log($scope.time);
+                        });
                       },
                       'pause':function(time)
                       {
