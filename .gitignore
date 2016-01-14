@@ -2,7 +2,7 @@
 # http://git-scm.com/docs/gitignore
 www/lib/
 platforms
-plugins/androiod.json
+plugins/android.json
 resources
 .profile
 .editorconfig
