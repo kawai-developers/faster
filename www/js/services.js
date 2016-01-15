@@ -53,9 +53,9 @@ module.factory('Game', function($interval)
         */
         game.init=function()
         {
-          game.timer = {
+          /*game.timer = {
                         value: time
-                       };
+                      };*/
           if(typeof game.callbacks === 'object' && typeof game.callbacks['afterInit'] === 'function') game.callbacks['afterInit'](game);
           game.play();
         }
@@ -75,23 +75,23 @@ module.factory('Game', function($interval)
                       value: time
                      };
 
+        var started=false;
         /**
         *Function that starts the timer
         */
         var startTimer=function()
         {
-          if(game.timer.value>0)
+          if(game.timer.value>0 && !started)
           {
+            started=true;
             //Better to Use Angular's Interval
             interval=$interval(function()
             {
               if(game.status==='play')
               {
-                $interval(function()
-                {
-                  game.timer.value--;
-                  console.log(game.timer.value);
-                });
+                game.timer.value--;
+                console.log(game.timer.value);
+
                 if(game.timer.value==0) game.over();
               }
             },1000);
