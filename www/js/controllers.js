@@ -44,7 +44,7 @@ angular.module('starter.controllers', ['ionic','ui.router'])
 /**
 *Controller that does all the Dirty Job for the Game
 */
-.controller('Game',function($scope,$timeout,$state,Game,MenuItem)
+.controller('Game',function($scope,$state,Game,MenuItem)
 {
   console.log("Echo");
 
@@ -98,6 +98,10 @@ angular.module('starter.controllers', ['ionic','ui.router'])
                         //Add on the top an Option to save the game
                         MenuItem.items.others.unshift(saveItem);
                         console.log(MenuItem.items.others);
+                      },
+                      'over':function()
+                      {
+                        ionic.EventController.trigger('gameOver',{});
                       }
                     };
 
@@ -112,6 +116,10 @@ angular.module('starter.controllers', ['ionic','ui.router'])
     $scope.timer = Game.current_game.timer;
   };
 
+  ionic.EventController.on('gameOver',function()
+  {
+    console.log("GameOver Event");
+  })
 
   init_game();
 
