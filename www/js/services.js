@@ -24,7 +24,7 @@ module.factory('Game', function($interval)
       *@param grid_width How many Items each row will have
       *@param grid_height How many items the grid will have vertically
       */
-      function Game(items,time,grid_width,grid_height,callbacks,scope)
+      function Game(items,time,grid_width,grid_height,callbacks)
       {
         var game=this;
 
@@ -36,7 +36,6 @@ module.factory('Game', function($interval)
 
         game.callbacks=callbacks;
 
-        game.scope=scope;
 
         /**
         *Function that performs the logic
@@ -54,7 +53,9 @@ module.factory('Game', function($interval)
         */
         game.init=function()
         {
-          game.timer=time;
+          game.timer = {
+                        value: time
+                       };
           if(typeof game.callbacks === 'object' && typeof game.callbacks['afterInit'] === 'function') game.callbacks['afterInit'](game);
           game.play();
         }
@@ -70,27 +71,28 @@ module.factory('Game', function($interval)
         game.status='uninitialised';
 
 
-        game.timer=time;
+        game.timer= {
+                      value: time
+                     };
 
         /**
         *Function that starts the timer
         */
         var startTimer=function()
         {
-          if(game.timer>0)
+          if(game.timer.value>0)
           {
             //Better to Use Angular's Interval
             interval=$interval(function()
             {
               if(game.status==='play')
               {
-                game.timer--;
-                if(game.timer==0) game.over();
-
-                if(typeof game.callbacks === 'object' && typeof game.callbacks['timerUpdate'] === 'function')
+                $interval(function()
                 {
-                  game.callbacks['timerUpdate'](game.timer,game.scope);
-                }
+                  game.timer.value--;
+                  console.log(game.timer.value);
+                });
+                if(game.timer.value==0) game.over();
               }
             },1000);
           }
@@ -143,6 +145,7 @@ module.factory('Game', function($interval)
         {
           game.status='over';
           if(interval!==null) $interval.cancel(interval);
+          if(typeof game.callbacks === 'object' && typeof game.callbacks['over'] === 'function') game.callbacks['over']();
         }
 
         game.isOver=function()
