@@ -32,7 +32,9 @@ module.factory('Game', function($interval)
         game.items=items;
 
         //The grid of the items that will be swapped
-        game.grid=[];
+        game.grid={
+                    value:[]
+                  };
 
         game.callbacks=callbacks;
 
@@ -53,8 +55,8 @@ module.factory('Game', function($interval)
         */
         game.init=function()
         {
-          game.timer.time=0;
-          score=0;
+          game.timer.value=time;
+          points.value=0;
 
           /*Generate grid randomly*/
           if(angular.isArray(items)) //check if array
@@ -65,10 +67,10 @@ module.factory('Game', function($interval)
               {
                 var randItemIndex=Math.floor(Math.random() * (items.length-1));
 
-                if(typeof game.grid[i]=== 'undefined') game.grid[i]=[];//Sometimes we get Undefined array
+                if(typeof game.grid.value[i]=== 'undefined') game.grid.value[i]=[];//Sometimes we get Undefined array
 
-                game.grid[i][j]=items[randItemIndex].clone();//Not sure if I directly set it it will deep copy the object
-                game.grid[i][j].posistion={x:i,y:j};//Perhaps may need to depricate
+                game.grid.value[i][j]=items[randItemIndex].clone();//Not sure if I directly set it it will deep copy the object
+                game.grid.value[i][j].posistion={x:i,y:j};//Perhaps may need to depricate
               }
             }
           }

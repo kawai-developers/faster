@@ -81,10 +81,10 @@ angular.module('starter.controllers', ['ionic','ui.router'])
       *Items for the Game
       */
       var items=[
-                  new GameItem('./img/icon1.png','./img/icon1.png','./img/icon1.png','trolley'),
-                  new GameItem('./img/icon2.png','./img/icon2.png','./img/icon2.png','metro'),
-                  new GameItem('./img/icon3.png','./img/icon3.png','./img/icon3.png','bus'),
-                  new GameItem('./img/icon4.png','./img/icon4.png','./img/icon4.png','tram'),
+                  new GameItem('../img/icon1.jpg','../img/icon1.jpg','../img/icon1.jpg','trolley'),
+                  new GameItem('../img/icon2.jpg','../img/icon2.jpg','../img/icon2.jpg','metro'),
+                  new GameItem('../img/icon3.jpg','../img/icon3.jpg','../img/icon3.jpg','bus'),
+                  new GameItem('../img/icon4.jpg','../img/icon4.jpg','../img/icon4.jpg','tram'),
                 ];
 
       /**
@@ -131,6 +131,7 @@ angular.module('starter.controllers', ['ionic','ui.router'])
     }
     $scope.timer = Game.current_game.timer;
     $scope.points=Game.current_game.getScore();
+    $scope.grid=Game.current_game.grid;
   };
 
   ionic.EventController.on('gameOver',function()

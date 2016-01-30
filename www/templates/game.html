@@ -24,7 +24,14 @@ limitations under the License.
       <button class="button" ng-click="pause()"><i class="fa fa-pause"></i></button>
     </div>
   </ion-header-bar>
-  <ion-content class="center">
+  <ion-content>
+    <table style="width:100%">
+      <tbody ng-repeat="(key,row) in grid.value">
+        <tr ng-repeat="item in row" >
+          <td><img src="{{item.icon}}"/></td>
+        </tr>
+      </tbody>
+    </table>
   </ion-content>
 </ion-view>
 
