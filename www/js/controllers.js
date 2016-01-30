@@ -44,9 +44,25 @@ angular.module('starter.controllers', ['ionic','ui.router'])
 /**
 *Controller that does all the Dirty Job for the Game
 */
-.controller('Game',function($scope,$state,Game,MenuItem)
+.controller('Game',function($scope,$state,$ionicModal,Game,MenuItem)
 {
-  console.log("Echo");
+
+  /*###################### Modal Area ######################*/
+  $ionicModal.fromTemplateUrl('gameOverModal.html',
+  {
+    scope: $scope,
+    animation: 'slide-in-up'
+  })
+  .then(function(modal)
+  {
+    $scope.gameOverModal = modal;
+  });
+
+  $scope.$on('$destroy', function()
+  {
+    $scope.gameOverModal.remove();
+  });
+  /*###############################################################*/
 
   /*################### Controller Initialization ####################*/
   var GameItem=Game.item;
@@ -114,12 +130,14 @@ angular.module('starter.controllers', ['ionic','ui.router'])
       Game.current_game.play();
     }
     $scope.timer = Game.current_game.timer;
+    $scope.points=Game.current_game.getScore();
   };
 
   ionic.EventController.on('gameOver',function()
   {
     console.log("GameOver Event");
-  })
+    $scope.gameOverModal.show();
+  });
 
   init_game();
 

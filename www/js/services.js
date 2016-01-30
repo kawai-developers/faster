@@ -71,6 +71,10 @@ module.factory('Game', function($interval)
         game.status='uninitialised';
 
 
+        /**
+        *We inplemented timer like that because
+        *this its the only way to get the timer update
+        */
         game.timer= {
                       value: time
                      };
@@ -165,16 +169,21 @@ module.factory('Game', function($interval)
         /*##############################################################################*/
 
         /*######################### For Scoring system #######################*/
-        game.points=0;
+        var points={value:0};
 
         game.addScore=function(points)
         {
-          game.points+=points;
+          points.value+=points;
         }
 
         game.removeScore=function(points)
         {
-          game.points-=points;
+          points.value-=points;
+        }
+
+        game.getScore=function()
+        {
+          return points;
         }
         /*#####################################################################*/
 
