@@ -53,14 +53,33 @@ module.factory('Game', function($interval)
         */
         game.init=function()
         {
-          /*game.timer = {
-                        value: time
-                      };*/
+          game.timer.time=0;
+          score=0;
+
+          /*Generate grid randomly*/
+          if(angular.isArray(items)) //check if array
+          {
+            for(i=0;i<grid_width;i++)
+            {
+              for(j=0;j<grid_height;j++)
+              {
+                var randItemIndex=Math.floor(Math.random() * (items.length-1));
+
+                if(typeof game.grid[i]=== 'undefined') game.grid[i]=[];//Sometimes we get Undefined array
+
+                game.grid[i][j]=items[randItemIndex].clone();//Not sure if I directly set it it will deep copy the object
+                game.grid[i][j].posistion={x:i,y:j};//Perhaps may need to depricate
+              }
+            }
+          }
+          console.log(game.grid);
+          /*End of: "Generate grid randomly"*/
+
           if(typeof game.callbacks === 'object' && typeof game.callbacks['afterInit'] === 'function') game.callbacks['afterInit'](game);
           game.play();
         }
 
-        /*####################### Starting apausing and overing the game #############*/
+        /*####################### Starting a pausing and overing the game #############*/
         /**
         *The Game has the Foillowing Status
         *'uninitialised': When the game has Not Been Started yet
@@ -74,6 +93,7 @@ module.factory('Game', function($interval)
         /**
         *We inplemented timer like that because
         *this its the only way to get the timer update
+        *Into the Controller
         */
         game.timer= {
                       value: time
@@ -235,6 +255,14 @@ module.factory('Game', function($interval)
         *Check if you need it
         */
         item.posistion={x:0,y:0};
+
+        /**
+        *Clone the Object (used for Initialization)
+        */
+        item.clone=function()
+        {
+          return new GameItem(item.icon,item.icon_destroyed,item.icon_marked,item.name)
+        }
 
         /**
         *Check if this item is equal with another one

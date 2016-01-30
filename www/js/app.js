@@ -50,7 +50,6 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
   .state('home',{url:'/home',templateUrl: 'templates/home.html', controller: 'Home',})
   .state('menu',{url:'/menu',templateUrl: 'templates/menu.html', controller: 'Menu',})
   .state('game',{url:'/game',templateUrl: 'templates/game.html', controller: 'Game',});
-
   // if none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise('/home');
 
