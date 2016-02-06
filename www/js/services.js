@@ -45,7 +45,33 @@ module.factory('Game', function($interval)
         */
         game.swap=function(i,j,direction)
         {
-          console.log(i+" "+j+" "+direction);
+          switch(direction)
+          {
+            case 'up':
+              if(i!==0)
+              {
+                console.log("Can swap Up");
+              }
+              break;
+            case 'down':
+              if(i!==game.grid.value.length-1)
+              {
+                console.log("Can swap Down");
+              }
+              break;
+            case 'left':
+              if(j!==0)
+              {
+                console.log("Can swap Left");
+              }
+              break;
+            case 'right':
+              if(j!==game.grid.value[i].length-1)
+              {
+                console.log("Can swap Right");
+              }
+              break;
+          }
         };
 
         /**
