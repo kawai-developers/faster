@@ -39,40 +39,50 @@ module.factory('Game', function($interval)
         game.callbacks=callbacks;
 
 
-        /**
-        *Function that performs the logic
-        *and does the comparisons between Items
-        */
+        /*############# Functions and methods that perfrorm the swap of the elements and have the main gameplay logic #############*/
         game.swap=function(i,j,direction)
         {
           switch(direction)
           {
             case 'up':
-              if(i!==0)
+              if(i!==0) //Cannot swap first line elements
               {
                 console.log("Can swap Up");
+                swapAction(i,j,i-1,j);
               }
               break;
             case 'down':
-              if(i!==game.grid.value.length-1)
+              if(i!==game.grid.value.length-1) //cannot swap last line elements
               {
                 console.log("Can swap Down");
+                swapAction(i,j,i+1,j);
               }
               break;
             case 'left':
-              if(j!==0)
+              if(j!==0) //Cannot swap first column elements
               {
                 console.log("Can swap Left");
+                swapAction(i,j,i,j-1);
               }
               break;
             case 'right':
-              if(j!==game.grid.value[i].length-1)
+              if(j!==game.grid.value[i].length-1) //Cannot swap last column elements
               {
                 console.log("Can swap Right");
+                swapAction(i,j,i,j+1);
               }
               break;
           }
         };
+
+        var swapAction=function(i,j,newi,newj)
+        {
+          var temp=game.grid.value[i][j];
+          game.grid.value[i][j]=game.grid.value[newi][newj];
+          game.grid.value[newi][newj]=temp;
+        }
+        /*########################################################################################################################*/
+
 
         /**
         *Method that Initialises and starts the game
