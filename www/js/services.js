@@ -43,9 +43,9 @@ module.factory('Game', function($interval)
         *Function that performs the logic
         *and does the comparisons between Items
         */
-        game.swap=function()
+        game.swap=function(i,j,direction)
         {
-          
+          console.log(i+" "+j+" "+direction);
         };
 
         /**

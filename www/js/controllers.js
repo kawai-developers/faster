@@ -132,7 +132,28 @@ angular.module('starter.controllers', ['ionic','ui.router'])
     $scope.timer = Game.current_game.timer;
     $scope.points=Game.current_game.getScore();
     $scope.grid=Game.current_game.grid;
-    //$scope.swipe=Game.swap();
+
+    /*Functions that do all the swipe*/
+    $scope.swipeup=function(i,j)
+    {
+      Game.current_game.swap(i,j,'up');
+    };
+
+    $scope.swipeDown=function(i,j)
+    {
+      Game.current_game.swap(i,j,'down');
+    };
+
+    $scope.swipeLeft=function(i,j)
+    {
+      Game.current_game.swap(i,j,'left');
+    };
+
+    $scope.swipeRight=function(i,j)
+    {
+      Game.current_game.swap(i,j,'right');
+    };
+    /*End of: "Functions that do all the swap"*/
   };
 
   ionic.EventController.on('gameOver',function()

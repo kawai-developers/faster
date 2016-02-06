@@ -26,9 +26,9 @@ limitations under the License.
   </ion-header-bar>
   <ion-content>
 
-  <div ng-repeat="(key,row) in grid.value" class="row">
-    <div  ng-repeat="item in row" class="col">
-      <img  src="{{item.icon}}"/>
+  <div ng-repeat="(i,row) in grid.value" class="row">
+    <div  ng-repeat="(j,item) in row" class="col">
+      <img on-drag-up="swipeup({{i}},{{j}})" on-drag-down="swipeDown({{i}},{{j}})" on-drag-left="swipeLeft({{i}},{{j}})" on-drag-right="swipeRight({{i}},{{j}})" src="{{item.icon}}"/>
     </div>
   </div>
 
