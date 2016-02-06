@@ -25,13 +25,13 @@ limitations under the License.
     </div>
   </ion-header-bar>
   <ion-content>
-    <table style="width:100%">
-      <tbody ng-repeat="(key,row) in grid.value">
-        <tr ng-repeat="item in row" >
-          <td><img src="{{item.icon}}"/></td>
-        </tr>
-      </tbody>
-    </table>
+
+  <div ng-repeat="(key,row) in grid.value" class="row">
+    <div  ng-repeat="item in row" class="col">
+      <img  src="{{item.icon}}"/>
+    </div>
+  </div>
+
   </ion-content>
 </ion-view>
 

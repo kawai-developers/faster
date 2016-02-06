@@ -132,6 +132,7 @@ angular.module('starter.controllers', ['ionic','ui.router'])
     $scope.timer = Game.current_game.timer;
     $scope.points=Game.current_game.getScore();
     $scope.grid=Game.current_game.grid;
+    //$scope.swipe=Game.swap();
   };
 
   ionic.EventController.on('gameOver',function()

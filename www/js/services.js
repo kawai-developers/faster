@@ -45,7 +45,7 @@ module.factory('Game', function($interval)
         */
         game.swap=function()
         {
-
+          
         };
 
         /**
