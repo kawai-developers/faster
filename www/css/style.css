@@ -1,4 +1,8 @@
 /* Empty. Add your own CSS if you like */
+h1	{color:#fff; font-size:1.6em;  position:absolute; margin:60px; 
+	padding-top: 10px; font-weight: 400;} /* gia to intro*/
+h2	{color: #EC0088; font-size:2.0em; font-weight: 400;		margin:0px; } /*ta koumpia!*/
+
 
 .center {
   display: flex;
@@ -12,20 +16,52 @@
 .main {
   background: url("../img/bg-texture-dark.png")!important;
 }
-
 .main-blue{
-  width:90%;
-  min-height:90%;
-  background-color:blue;
-  color:rgb(254,254,254);
-  font-size: 3em;
+
+	width:90 %;
+	max-width:960px;
+	min-height:90%;
+	background-color:#0064A6;
+	color:#fff;
+	font-size:1.6em; 
+	margin:30px; 
+	padding: 40px;
+	border-radius: 10px;
+	box-shadow: #004573 3px 3px 0px;
+
+	
 }
 
 .general_button {
-	background:transparent;
-	border:none;
-	cursor:pointer;
-	outline:none;
+	background:transparent; 
+	border:none; 
+	cursor:pointer; 
+	outline:none; 
 	display:block;
 	margin: auto;
+	position:relative;
+	box-shadow: #004573 3px 3px 0px;
+	background-color:#fff;
+	border-radius: 7px;
+	
+}
+
+.general_button:active {
+	box-shadow: 2px 2px #004573;
+	top: 1px;left:1px;
+}
+
+.home .general_button {
+    margin-top: 40px;
+	background-color:#fff; /* ti 8a einai ta alla? */
+	display: inline-block;
+    padding: 0px 25px;
+}
+
+
+.home_logo {
+	display:block;
+	width:80%;
+	margin:auto;
+	max-width:350px;
 }
