@@ -17,13 +17,19 @@ limitations under the License.
   <ion-nav-bar style="display:none">
   </ion-nav-bar>
   <ion-content>
-    <div class="row row-center">
-      <div class="col text-center main-blue">
-        <pre>{{content}}</pre>
-      </div>
+    <img class="home_logo" src="img/logo.svg" />
+	<div class="home row row-center">
+		
+		<div class="col text-center main-blue">
+			<pre>{{content}}</pre> 
+			<a class="general_button home_btn" href="#/menu"> <h2> {{buttonText}} </h2></a>
+		</div>
     </div>
+	
+	<!---
     <div class="center">
-        <a class="general_button" href="#/menu">{{buttonText}}</a>
+        <a class="general_button" href="#/menu"> <h2> {{buttonText}} </h2></a>
     </div>
+	-->
   </ion-content>
 </ion-view>
