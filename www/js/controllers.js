@@ -66,6 +66,7 @@ angular.module('starter.controllers', ['ionic','ui.router'])
   $scope.closeGameOverModal=function()
   {
     $scope.gameOverModal.hide();
+    $state.go("menu");
   }
   /*###############################################################*/
 
@@ -164,6 +165,10 @@ angular.module('starter.controllers', ['ionic','ui.router'])
   ionic.EventController.on('gameOver',function()
   {
     console.log("GameOver Event");
+
+    MenuItem.items.play.name_="New Game";
+    MenuItem.items.others.shift();
+    Game.current_game=null;
     $scope.gameOverModal.show();
   });
 
@@ -173,5 +178,6 @@ angular.module('starter.controllers', ['ionic','ui.router'])
   {
     console.log("Pausing Game");
     Game.current_game.pause();
+
   }
 });
