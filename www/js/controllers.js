@@ -62,6 +62,11 @@ angular.module('starter.controllers', ['ionic','ui.router'])
   {
     $scope.gameOverModal.remove();
   });
+
+  $scope.closeGameOverModal=function()
+  {
+    $scope.gameOverModal.hide();
+  }
   /*###############################################################*/
 
   /*################### Controller Initialization ####################*/

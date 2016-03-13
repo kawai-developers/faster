@@ -38,8 +38,13 @@ limitations under the License.
 <!-- Here fill In the html for Game Over-->
 <script id="gameOverModal.html" type="text/ng-template">
   <ion-modal-view>
-    <ion-header-bar>
-      <h1 class="title">Game Over</h1>
+    <ion-header-bar class="row">
+        <div class="col">
+          <h1>Game Over</h1>
+        </div>
+        <div class="col">
+          <button class=" button button-clear button-positive" ng-click="closeGameOverModal()"><i class="fa fa-times"></i></button>
+        </div>
     </ion-header-bar>
     <ion-content>
       Your score is: <span>{{points.value}}</span>
