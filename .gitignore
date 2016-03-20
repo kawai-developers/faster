@@ -6,3 +6,4 @@ plugins/android.json
 resources
 .profile
 .editorconfig
+node_modules
