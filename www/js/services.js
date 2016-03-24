@@ -172,16 +172,16 @@ module.factory('Game', function($interval)
           {
             started=true;
             //Better to Use Angular's Interval
-            // interval=$interval(function()
-            // {
-            //   if(game.status==='play')
-            //   {
-            //     game.timer.value--;
-            //     console.log(game.timer.value);
-            //
-            //     if(game.timer.value==0) game.over();
-            //   }
-            // },1000);
+            interval=$interval(function()
+            {
+              if(game.status==='play')
+              {
+                game.timer.value--;
+                console.log(game.timer.value);
+
+                if(game.timer.value==0) game.over();
+              }
+            },1000);
           }
         }
 
@@ -300,7 +300,7 @@ module.factory('Game', function($interval)
         item.icon_destroyed=icon_destroyed;//Icon if the item is Destroyed
         item.icon_marked=icon_marked;//Icon when the item is selected
 
-        item.unique=(unique)?unique:0;//A unique name for the item
+        item.unique=(unique)?unique:0;//A unique number for new items
 
         /*
         *A Characteristic name of the itemYourFactory
@@ -336,7 +336,7 @@ module.factory('Game', function($interval)
         item.clone=function()
         {
            var newClone=new GameItem(item.icon,item.icon_destroyed,item.icon_marked,item.name,item.unique);
-           item.unique++;//After a clone refresh the unique
+           item.unique++;//After a clone refresh the unique number in order the next clones to have new name
            return newClone;
         }
 
