@@ -140,24 +140,24 @@ angular.module('starter.controllers', ['ionic','ui.router'])
     $scope.grid=Game.current_game.grid;
 
     /*Functions that do all the swipe*/
-    $scope.swipeup=function(i,j)
+    $scope.swipeup=function(unique)
     {
-      Game.current_game.swap(i,j,'up');
+      Game.current_game.swapById(unique,'up');
     };
 
-    $scope.swipeDown=function(i,j)
+    $scope.swipeDown=function(unique)
     {
-      Game.current_game.swap(i,j,'down');
+      Game.current_game.swapById(unique,'down');
     };
 
-    $scope.swipeLeft=function(i,j)
+    $scope.swipeLeft=function(unique)
     {
-      Game.current_game.swap(i,j,'left');
+      Game.current_game.swapById(unique,'left');
     };
 
-    $scope.swipeRight=function(i,j)
+    $scope.swipeRight=function(unique)
     {
-      Game.current_game.swap(i,j,'right');
+      Game.current_game.swapById(unique,'right');
     };
     /*End of: "Functions that do all the swap"*/
   };

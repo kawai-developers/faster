@@ -28,7 +28,7 @@ limitations under the License.
 
   <div ng-repeat="(i,row) in grid.value" class="row">
     <div  ng-repeat="(j,item) in row" class="col">
-      <img on-drag-up="swipeup({{i}},{{j}})" on-drag-down="swipeDown({{i}},{{j}})" on-drag-left="swipeLeft({{i}},{{j}})" on-drag-right="swipeRight({{i}},{{j}})" src="{{item.icon}}"/>
+      <img on-swipe-up="swipeup('{{item.uniqueId()}}')" on-swipe-down="swipeDown('{{item.uniqueId()}}')" on-swipe-left="swipeLeft('{{item.uniqueId()}}')" on-swipe-right="swipeRight('{{item.uniqueId()}}')" src="{{item.icon}}"/>
     </div>
   </div>
 

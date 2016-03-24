@@ -40,8 +40,33 @@ module.factory('Game', function($interval)
 
 
         /*############# Functions and methods that perfrorm the swap of the elements and have the main gameplay logic #############*/
+
+        game.swapById=function(unique,direction)
+        {
+          for(var i=0;i<game.grid.value.length;i++)
+          {
+            for(var j=0;j<game.grid.value[i].length;j++)
+            {
+              var item=game.grid.value[i][j];
+              console.log(item.uniqueId(),unique);
+              if(item.uniqueId()===unique)
+              {
+                game.swap(i,j,direction);
+                return;
+              }
+            }
+          }
+        }
+
+        /**
+        *Function that does the swap of an element
+        *@param i {Int} the i position of the element
+        *@param j {Int} the j position of the element
+        *@param direction {String} the direction of swap
+        */
         game.swap=function(i,j,direction)
         {
+          console.log("i: "+i,"j: "+j)
           switch(direction)
           {
             case 'up':
@@ -147,16 +172,16 @@ module.factory('Game', function($interval)
           {
             started=true;
             //Better to Use Angular's Interval
-            interval=$interval(function()
-            {
-              if(game.status==='play')
-              {
-                game.timer.value--;
-                console.log(game.timer.value);
-
-                if(game.timer.value==0) game.over();
-              }
-            },1000);
+            // interval=$interval(function()
+            // {
+            //   if(game.status==='play')
+            //   {
+            //     game.timer.value--;
+            //     console.log(game.timer.value);
+            //
+            //     if(game.timer.value==0) game.over();
+            //   }
+            // },1000);
           }
         }
 
@@ -263,16 +288,19 @@ module.factory('Game', function($interval)
       /**
       *Function we need for the Game Item
       *@param icon {String} Normal Icon For the Item (it can be either html or image path)
-      *@param icon_destroyed {String} Icon when The Game is Destroyed (it can be either html or image path)
-      *@param icon_marked {String}
+      *@param icon_destroyed {String} Icon when The Item is Destroyed (it can be either html or image path)
+      *@param icon_marked {String} Icon when The Item is Maked dfor checking (it can be either html or image path)
+      *@param unique {Int} A Unique number that determines the element
       */
-      function GameItem(icon,icon_destroyed,icon_marked,name)
+      function GameItem(icon,icon_destroyed,icon_marked,name,unique)
       {
         var item=this;
 
         item.icon=icon;//Icon for the normal situations
         item.icon_destroyed=icon_destroyed;//Icon if the item is Destroyed
         item.icon_marked=icon_marked;//Icon when the item is selected
+
+        item.unique=(unique)?unique:0;//A unique name for the item
 
         /*
         *A Characteristic name of the itemYourFactory
@@ -295,11 +323,21 @@ module.factory('Game', function($interval)
         item.posistion={x:0,y:0};
 
         /**
+        *Generate a specific uniqueId string that makes it recognizable
+        */
+        item.uniqueId=function()
+        {
+          return item.name+item.unique;
+        }
+
+        /**
         *Clone the Object (used for Initialization)
         */
         item.clone=function()
         {
-          return new GameItem(item.icon,item.icon_destroyed,item.icon_marked,item.name)
+           var newClone=new GameItem(item.icon,item.icon_destroyed,item.icon_marked,item.name,item.unique);
+           item.unique++;//After a clone refresh the unique
+           return newClone;
         }
 
         /**
