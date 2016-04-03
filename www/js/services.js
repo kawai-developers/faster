@@ -33,7 +33,20 @@ module.factory('Game', function($interval)
 
         //The grid of the items that will be swapped
         game.grid={
-                    value:[]
+                    value:[],
+                    loopItems:function(callback)
+                    {
+                      if(typeof callback!=='function') return;
+
+                      for(var i=0;i<game.grid.value.length;i++)
+                      {
+                        for(var j=0;j<game.grid.value[i].length;j++)
+                        {
+                          var item=game.grid.value[i][j];
+                          callback(item,i,j,this.value);
+                        }
+                      }
+                    }
                   };
 
         game.callbacks=callbacks;
@@ -41,6 +54,58 @@ module.factory('Game', function($interval)
 
         /*############# Functions and methods that perfrorm the swap of the elements and have the main gameplay logic #############*/
 
+        /**
+        *Function that does the swap of an element
+        *@param i {Int} the i position of the element
+        *@param j {Int} the j position of the element
+        *@param direction {String} the direction of swap
+        */
+        game.swapCheck=function(unique,direction)
+        {
+          var ij=game.swapById(unique,direction);
+          var opposite=opposite_direction(direction);
+
+          var marked=game.check_columns(ij.i,ij.j)
+          if(marked.length>0)
+          {
+            for(var i=0;i<marked.length;i++)
+            {
+              marked[i].status='deleted';
+            }
+            game.remove_deleted_items();
+          }
+          else
+          {
+            game.swap(ij.i,ij.j,opposite);
+          }
+        }
+
+        /**
+        *Check the grid for dame rows and columns
+        */
+        // game.checkGrid=function()
+        // {
+        //   game.grid.loopItems(function(item,i,j)
+        //   {
+        //     var marked=game.check_columns(i,j);
+        //
+        //     if(marked.length>0)
+        //     {
+        //       for(var i=0;i<marked.length;i++)
+        //       {
+        //         marked[i].status='deleted';
+        //       }
+        //     }
+        //   });
+        // };
+
+        /**
+        *Swaps an element that has a unique into a direction
+        *@param unique {String} A unique Identifier for the item
+        *@param direction {String} The direction of the swap
+        *
+        *@return {Object} With the i,j of the element found
+        */
         game.swapById=function(unique,direction)
         {
           for(var i=0;i<game.grid.value.length;i++)
@@ -48,15 +113,33 @@ module.factory('Game', function($interval)
             for(var j=0;j<game.grid.value[i].length;j++)
             {
               var item=game.grid.value[i][j];
-              console.log(item.uniqueId(),unique);
               if(item.uniqueId()===unique)
               {
                 game.swap(i,j,direction);
-                return;
+                return {i,j};
               }
             }
           }
         }
+
+        /**
+        *@return The opposite direction of that specified
+        */
+        var opposite_direction=function(direction)
+        {
+          switch(direction)
+          {
+            case 'up':
+              return 'down';
+            case 'down':
+              return 'up';
+            case 'left':
+              return 'right';
+            case 'right':
+              return 'left';
+          }
+        }
+
 
         /**
         *Function that does the swap of an element
@@ -66,7 +149,6 @@ module.factory('Game', function($interval)
         */
         game.swap=function(i,j,direction)
         {
-          console.log("i: "+i,"j: "+j)
           switch(direction)
           {
             case 'up':
@@ -102,12 +184,110 @@ module.factory('Game', function($interval)
 
         var swapAction=function(i,j,newi,newj)
         {
+          console.log(i,j);
           var temp=game.grid.value[i][j];
           game.grid.value[i][j]=game.grid.value[newi][newj];
           game.grid.value[newi][newj]=temp;
         }
+
+        game.remove_deleted_items=function()
+        {
+          game.grid.loopItems(function(item,i,j,values)
+          {
+            console.log(item.status);
+            if(item.status==='deleted')
+            {
+              if(i!==0)
+              {
+                for(var k=values.length-1;k>0;k--)
+                {
+                  for(var h=k;h>0;h--)
+                  {
+                    game.swap(h,j,'up');
+                  }
+                }
+              }
+              game.addScore(1);
+              values[0][j]=random_item();//Replace the item with the new one
+            }
+          });
+        }
+
+        /**
+        *Check if item i,j has same elements in the same column
+        */
+        game.check_columns=function(i,j)
+        {
+          var item=game.grid.value[i][j];
+          item.status="marked";
+
+          var checked_columns=[item];//Store the checked items
+
+          /*Check columns*/
+          for(var i1=0;i1<game.grid.value.length;i1++)
+          {
+            var item2=game.grid.value[i1][j]
+            if(item.equals(item2))
+            {
+              item2.status="marked";
+              checked_columns.push(item2);
+            }
+          }
+          /*End of: Check columns*/
+
+          return checked_columns;
+        }
+
+        game.check_rows=function(i,j)
+        {
+          var item=game.grid.value[i][j];
+          item.status="marked";
+
+          var checked_rows=[item];//Store the checked items
+
+          /*Check columns*/
+          for(var j1=0;j1<game.grid.value[i].length;j1++)
+          {
+            var item2=game.grid.value[i][j1]
+            if(item.equals(item2))
+            {
+              item2.status="marked";
+              checked_rows.push(item2);
+            }
+          }
+          /*End of: Check columns*/
+
+          return checked_rows;
+        }
+
+        game.check=function(i,j)
+        {
+          var rows=game.check_rows(i,j);
+          var columns=game.check_columns(i,j);
+
+          var delete_rows=(rows.length>=3);
+          for(var k=0;k<rows.length;k++)
+          {
+            rows[k].status=(delete_rows)?'destroyed':'start';
+          }
+
+          var delete_columns=(columns.length>=3);
+          for(var k=0;k<columns.length;k++)
+          {
+            columns[k].status=(delete_columns)?'destroyed':'start';
+          }
+
+          return delete_columns||delete_rows;
+        };
+
         /*########################################################################################################################*/
 
+
+        var random_item=function()
+        {
+          var randItemIndex=Math.floor(Math.random() * (items.length-1));
+          return items[randItemIndex].clone();//Not sure if I directly set it it will deep copy the object
+        }
 
         /**
         *Method that Initialises and starts the game
@@ -127,11 +307,8 @@ module.factory('Game', function($interval)
               for(j=0;j<grid_height;j++)
               {
                 var randItemIndex=Math.floor(Math.random() * (items.length-1));
-
                 if(typeof game.grid.value[i]=== 'undefined') game.grid.value[i]=[];//Sometimes we get Undefined array
-
-                game.grid.value[i][j]=items[randItemIndex].clone();//Not sure if I directly set it it will deep copy the object
-                game.grid.value[i][j].posistion={x:i,y:j};//Perhaps may need to depricate
+                game.grid.value[i][j]=items[randItemIndex].clone();//Not sure if I directly set it it will deep copy the object\
               }
             }
           }
@@ -151,7 +328,6 @@ module.factory('Game', function($interval)
         *'over': When Game Over
         */
         game.status='uninitialised';
-
 
         /**
         *We inplemented timer like that because
@@ -311,8 +487,9 @@ module.factory('Game', function($interval)
         /**
         *For now takes 2 values:
         *start if the Item is not destroyed
+        *marked if on swap tha item was marked for deletion
         *destroyed if the item in destroyed
-        *whatever dtatus you want
+        *whatever else for status you want
         */
         item.status="start";
 

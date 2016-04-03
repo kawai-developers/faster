@@ -142,22 +142,22 @@ angular.module('starter.controllers', ['ionic','ui.router'])
     /*Functions that do all the swipe*/
     $scope.swipeup=function(unique)
     {
-      Game.current_game.swapById(unique,'up');
+      Game.current_game.swapCheck(unique,'up');
     };
 
     $scope.swipeDown=function(unique)
     {
-      Game.current_game.swapById(unique,'down');
+      Game.current_game.swapCheck(unique,'down');
     };
 
     $scope.swipeLeft=function(unique)
     {
-      Game.current_game.swapById(unique,'left');
+      Game.current_game.swapCheck(unique,'left');
     };
 
     $scope.swipeRight=function(unique)
     {
-      Game.current_game.swapById(unique,'right');
+      Game.current_game.swapCheck(unique,'right');
     };
     /*End of: "Functions that do all the swap"*/
   };
