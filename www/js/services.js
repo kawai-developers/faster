@@ -322,7 +322,7 @@ module.factory('Game', function($interval)
           var delete_rows=(rows.length>=3);
           rows.forEach(function(item)
           {
-            item.status=(delete_columns)?'destroyed':'start';
+            item.status=(delete_rows)?'destroyed':'start';
           });
 
           var delete_columns=(columns.length>=3);
@@ -416,16 +416,16 @@ module.factory('Game', function($interval)
           {
             started=true;
             //Better to Use Angular's Interval
-            // interval=$interval(function()
-            // {
-            //   if(game.status==='play')
-            //   {
-            //     game.timer.value--;
-            //     console.log(game.timer.value);
-            //
-            //     if(game.timer.value==0) game.over();
-            //   }
-            // },1000);
+            interval=$interval(function()
+            {
+              if(game.status==='play')
+              {
+                game.timer.value--;
+                console.log(game.timer.value);
+
+                if(game.timer.value==0) game.over();
+              }
+            },1000);
           }
         }
 
