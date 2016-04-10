@@ -67,11 +67,6 @@ module.factory('Game', function($interval)
           //var marked=game.check_columns(ij.i,ij.j)
           if(game.checkGrid())
           {
-            // for(var i=0;i<marked.length;i++)
-            // {
-            //   marked[i].status='deleted';
-            // }
-            //game.checkGrid();
             game.remove_deleted_items();
           }
           else
@@ -89,19 +84,10 @@ module.factory('Game', function($interval)
           var marked=false;
           game.grid.loopItems(function(item,i,j)
           {
-            var marked=game.check(i,j);
-            var has_marked=marked.length>0;
-
-            if(has_marked)
-            {
-              for(var i=0;i<marked.length;i++)
-              {
-                marked[i].status='deleted';
-              }
-            }
-            marked=true;
+            var marked2=game.check(i,j);
+            marked=marked||marked2;
           });
-
+          console.log(marked);
           return marked;
         };
 
@@ -219,17 +205,17 @@ module.factory('Game', function($interval)
           game.grid.loopItems(function(item,i,j,values)
           {
             console.log(item.status);
-            if(item.status==='deleted')
+            if(item.status==='destroyed')
             {
               if(i!==0)
               {
                 for(var k=i;k>=0;k--)
                 {
-                  game.swapById(item.uniqueId(),'down')
+                  game.swapById(item.uniqueId(),'up')
                 }
               }
               game.addScore(1);
-              //values[0][j]=random_item();//Replace the item with the new one
+              values[0][j]=random_item();//Replace the item with the new one
             }
           });
         }
@@ -244,18 +230,32 @@ module.factory('Game', function($interval)
 
           var checked_columns=[item];//Store the checked items
 
+          //Check elements before
+          if(i!==0)
+          {
+            for(var i1=i;i1>0;i1--)
+            {
+              var item2=game.grid.value[i1][j]
+              if(item.equals(item2))
+              {
+                item2.status="marked";
+                checked_columns.push(item2);
+              }
+              else
+              {
+                break;
+              }
+            }
+          }
+
           /*Check columns*/
-          for(var i1=0;i1<game.grid.value.length;i1++)
+          for(var i1=i;i1<game.grid.value.length;i1++)
           {
             var item2=game.grid.value[i1][j]
             if(item.equals(item2))
             {
               item2.status="marked";
               checked_columns.push(item2);
-            }
-            else
-            {
-                break;
             }
           }
           /*End of: Check columns*/
@@ -274,7 +274,24 @@ module.factory('Game', function($interval)
           var checked_rows=[item];//Store the checked items
 
           /*Check columns*/
-          for(var j1=0;j1<game.grid.value[i].length;j1++)
+          if(j!==0)
+          {
+            for(var j1=j;j1>=0;j1--)
+            {
+              var item2=game.grid.value[i][j1];
+              if(item.equals(item2))
+              {
+                item2.status="marked";
+                checked_rows.push(item2);
+              }
+              else
+              {
+                break;
+              }
+            }
+          }
+
+          for(var j1=j;j1<game.grid.value[i].length;j1++)
           {
             var item2=game.grid.value[i][j1]
             if(item.equals(item2))
@@ -284,7 +301,7 @@ module.factory('Game', function($interval)
             }
             else
             {
-                break;
+              break;
             }
           }
           /*End of: Check columns*/
@@ -292,32 +309,31 @@ module.factory('Game', function($interval)
           return checked_rows;
         }
 
+
         /**
         *Perform a check if item in i,j position has the same rows & columns
         *@return {array} Wuth the items to delete
         */
         game.check=function(i,j)
         {
-          var rows=game.check_rows(i,j);
-          var columns=game.check_columns(i,j);
-
-          console.log(rows,columns);
+          var rows=unique_array(game.check_rows(i,j));
+          var columns=unique_array(game.check_columns(i,j));
 
           var delete_rows=(rows.length>=3);
-          for(var k=0;k<rows.length;k++)
+          rows.forEach(function(item)
           {
-            rows[k].status=(delete_rows)?'destroyed':'start';
-          }
+            item.status=(delete_columns)?'destroyed':'start';
+          });
 
           var delete_columns=(columns.length>=3);
-
-          for(var k=0;k<columns.length;k++)
+          columns.forEach(function(item)
           {
-            columns[k].status=(delete_columns)?'destroyed':'start';
-          }
+            item.status=(delete_columns)?'destroyed':'start';
+          });
+
+          console.log(game.grid.value[i][j].uniqueId(),rows,columns,delete_rows,delete_columns);
 
           var status=delete_columns||delete_rows;
-          if(!status)   game.grid.value[i][j].status='start';
 
           return status;
         };

@@ -6,6 +6,6 @@ var unique_array=function(array)
   {
     if(tmp.indexOf(item)===-1) tmp.push(item);
   });
-
+  console.log(array,tmp);
   return tmp;
 }
