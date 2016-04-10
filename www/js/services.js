@@ -56,8 +56,7 @@ module.factory('Game', function($interval)
 
         /**
         *Function that does the swap of an element
-        *@param i {Int} the i position of the element
-        *@param j {Int} the j position of the element
+        *@param unique {Stirng} Thye Unique Id of the element
         *@param direction {String} the direction of swap
         */
         game.swapCheck=function(unique,direction)
@@ -65,13 +64,14 @@ module.factory('Game', function($interval)
           var ij=game.swapById(unique,direction);
           var opposite=opposite_direction(direction);
 
-          var marked=game.check_columns(ij.i,ij.j)
-          if(marked.length>0)
+          //var marked=game.check_columns(ij.i,ij.j)
+          if(game.checkGrid())
           {
-            for(var i=0;i<marked.length;i++)
-            {
-              marked[i].status='deleted';
-            }
+            // for(var i=0;i<marked.length;i++)
+            // {
+            //   marked[i].status='deleted';
+            // }
+            //game.checkGrid();
             game.remove_deleted_items();
           }
           else
@@ -81,23 +81,48 @@ module.factory('Game', function($interval)
         }
 
         /**
-        *Check the grid for dame rows and columns
+        *Check the grid for same rows and columns
+        *and mark them as deleted
         */
-        // game.checkGrid=function()
-        // {
-        //   game.grid.loopItems(function(item,i,j)
-        //   {
-        //     var marked=game.check_columns(i,j);
-        //
-        //     if(marked.length>0)
-        //     {
-        //       for(var i=0;i<marked.length;i++)
-        //       {
-        //         marked[i].status='deleted';
-        //       }
-        //     }
-        //   });
-        // };
+        game.checkGrid=function()
+        {
+          var marked=false;
+          game.grid.loopItems(function(item,i,j)
+          {
+            var marked=game.check(i,j);
+            var has_marked=marked.length>0;
+
+            if(has_marked)
+            {
+              for(var i=0;i<marked.length;i++)
+              {
+                marked[i].status='deleted';
+              }
+            }
+            marked=true;
+          });
+
+          return marked;
+        };
+
+        /**
+        *Find an Element By the id
+        */
+        game.findById=function(unique,callback)
+        {
+          for(var i=0;i<game.grid.value.length;i++)
+          {
+            for(var j=0;j<game.grid.value[i].length;j++)
+            {
+              var item=game.grid.value[i][j];
+              if(item.uniqueId()===unique)
+              {
+                if(typeof callback === 'function') callback(i,j,item);
+                return {i,j};
+              }
+            }
+          }
+        };
 
         /**
         *Swaps an element that has a unique into a direction
@@ -120,7 +145,7 @@ module.factory('Game', function($interval)
               }
             }
           }
-        }
+        };
 
         /**
         *@return The opposite direction of that specified
@@ -184,7 +209,6 @@ module.factory('Game', function($interval)
 
         var swapAction=function(i,j,newi,newj)
         {
-          console.log(i,j);
           var temp=game.grid.value[i][j];
           game.grid.value[i][j]=game.grid.value[newi][newj];
           game.grid.value[newi][newj]=temp;
@@ -199,16 +223,13 @@ module.factory('Game', function($interval)
             {
               if(i!==0)
               {
-                for(var k=values.length-1;k>0;k--)
+                for(var k=i;k>=0;k--)
                 {
-                  for(var h=k;h>0;h--)
-                  {
-                    game.swap(h,j,'up');
-                  }
+                  game.swapById(item.uniqueId(),'down')
                 }
               }
               game.addScore(1);
-              values[0][j]=random_item();//Replace the item with the new one
+              //values[0][j]=random_item();//Replace the item with the new one
             }
           });
         }
@@ -232,12 +253,19 @@ module.factory('Game', function($interval)
               item2.status="marked";
               checked_columns.push(item2);
             }
+            else
+            {
+                break;
+            }
           }
           /*End of: Check columns*/
 
           return checked_columns;
         }
 
+        /**
+        *Check if item i,j has same elements in the same row
+        */
         game.check_rows=function(i,j)
         {
           var item=game.grid.value[i][j];
@@ -254,16 +282,26 @@ module.factory('Game', function($interval)
               item2.status="marked";
               checked_rows.push(item2);
             }
+            else
+            {
+                break;
+            }
           }
           /*End of: Check columns*/
 
           return checked_rows;
         }
 
+        /**
+        *Perform a check if item in i,j position has the same rows & columns
+        *@return {array} Wuth the items to delete
+        */
         game.check=function(i,j)
         {
           var rows=game.check_rows(i,j);
           var columns=game.check_columns(i,j);
+
+          console.log(rows,columns);
 
           var delete_rows=(rows.length>=3);
           for(var k=0;k<rows.length;k++)
@@ -277,7 +315,10 @@ module.factory('Game', function($interval)
             columns[k].status=(delete_columns)?'destroyed':'start';
           }
 
-          return delete_columns||delete_rows;
+          var status=delete_columns||delete_rows;
+          if(!status)   game.grid.value[i][j].status='start';
+
+          return status;
         };
 
         /*########################################################################################################################*/
@@ -306,9 +347,13 @@ module.factory('Game', function($interval)
             {
               for(j=0;j<grid_height;j++)
               {
-                var randItemIndex=Math.floor(Math.random() * (items.length-1));
+                var randItemIndex=Math.floor(Math.random() * (items.length-2));
                 if(typeof game.grid.value[i]=== 'undefined') game.grid.value[i]=[];//Sometimes we get Undefined array
                 game.grid.value[i][j]=items[randItemIndex].clone();//Not sure if I directly set it it will deep copy the object\
+
+                var temp=items[randItemIndex];
+                items[randItemIndex]=items[items.length-1];
+                items[items.length-1]=temp;
               }
             }
           }
@@ -348,16 +393,16 @@ module.factory('Game', function($interval)
           {
             started=true;
             //Better to Use Angular's Interval
-            interval=$interval(function()
-            {
-              if(game.status==='play')
-              {
-                game.timer.value--;
-                console.log(game.timer.value);
-
-                if(game.timer.value==0) game.over();
-              }
-            },1000);
+            // interval=$interval(function()
+            // {
+            //   if(game.status==='play')
+            //   {
+            //     game.timer.value--;
+            //     console.log(game.timer.value);
+            //
+            //     if(game.timer.value==0) game.over();
+            //   }
+            // },1000);
           }
         }
 
@@ -395,7 +440,6 @@ module.factory('Game', function($interval)
         {
           console.log("Game Started");
           game.status='play';
-
           //Start the counter
           startTimer();
         }
