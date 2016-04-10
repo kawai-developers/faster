@@ -310,6 +310,7 @@ module.factory('Game', function($interval)
           }
 
           var delete_columns=(columns.length>=3);
+
           for(var k=0;k<columns.length;k++)
           {
             columns[k].status=(delete_columns)?'destroyed':'start';
@@ -351,9 +352,15 @@ module.factory('Game', function($interval)
                 if(typeof game.grid.value[i]=== 'undefined') game.grid.value[i]=[];//Sometimes we get Undefined array
                 game.grid.value[i][j]=items[randItemIndex].clone();//Not sure if I directly set it it will deep copy the object\
 
-                var temp=items[randItemIndex];
-                items[randItemIndex]=items[items.length-1];
-                items[items.length-1]=temp;
+                /*Each time remove athe selected item and put it on the back*/
+                var item=items[randItemIndex];
+                items=items.filter(function(i)
+                {
+                  	return !i.equals(item);
+                });
+
+                items.push(item);
+                /*End of: "Each time remove athe selected item and put it on the back"*/
               }
             }
           }
@@ -541,7 +548,7 @@ module.factory('Game', function($interval)
         *The position of the Item
         *Check if you need it
         */
-        item.posistion={x:0,y:0};
+        item.posistion_checked={i:0,j:0};
 
         /**
         *Generate a specific uniqueId string that makes it recognizable
