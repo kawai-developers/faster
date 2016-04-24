@@ -30,7 +30,7 @@ limitations under the License.
     <div  ng-repeat="(j,item) in row" class="col">
       <div on-swipe-up="swipeup('{{item.uniqueId()}}')" on-swipe-down="swipeDown('{{item.uniqueId()}}')" on-swipe-left="swipeLeft('{{item.uniqueId()}}')" on-swipe-right="swipeRight('{{item.uniqueId()}}')">
         <img src="{{item.icon}}"/>
-        <!--<span>{{item.uniqueId()}}</span>/<span>{{item.status}}</span>-->
+        <span>{{item.uniqueId()}}</span>/<span>{{item.status}}</span>
       </div>
     </div>
   </div>

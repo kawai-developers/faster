@@ -215,7 +215,7 @@ module.factory('Game', function($interval)
                 }
               }
               game.addScore(1);
-              values[0][j]=random_item();//Replace the item with the new one
+              values[0][j]= game.randomItem();//Replace the item with the new one
             }
           });
         }
@@ -340,13 +340,6 @@ module.factory('Game', function($interval)
 
         /*########################################################################################################################*/
 
-
-        var random_item=function()
-        {
-          var randItemIndex=Math.floor(Math.random() * (items.length-1));
-          return items[randItemIndex].clone();//Not sure if I directly set it it will deep copy the object
-        }
-
         /**
         *Method that Initialises and starts the game
         *Why I used this function and not game.start()
@@ -366,16 +359,16 @@ module.factory('Game', function($interval)
               {
                 var randItemIndex=Math.floor(Math.random() * (items.length-2));
                 if(typeof game.grid.value[i]=== 'undefined') game.grid.value[i]=[];//Sometimes we get Undefined array
-                game.grid.value[i][j]=items[randItemIndex].clone();//Not sure if I directly set it it will deep copy the object\
+                game.grid.value[i][j]=game.randomItem();//Not sure if I directly set it it will deep copy the object\
 
                 /*Each time remove athe selected item and put it on the back*/
-                var item=items[randItemIndex];
-                items=items.filter(function(i)
-                {
-                  	return !i.equals(item);
-                });
-
-                items.push(item);
+                // var item=items[randItemIndex];
+                // items=items.filter(function(i)
+                // {
+                //   	return !i.equals(item);
+                // });
+                //
+                // items.push(item);
                 /*End of: "Each time remove athe selected item and put it on the back"*/
               }
             }
@@ -387,6 +380,31 @@ module.factory('Game', function($interval)
           game.play();
         }
 
+        /**
+        * Creates a random Item
+        *
+        * @param item {Object} If item specified it is moved to the end.
+        *                      Otherwise is moved the random item to the end
+        *
+        * @return {Object} with the random item
+        */
+        game.randomItem=function(item)
+        {
+          var randItemIndex=Math.floor(Math.random() * (items.length-2));
+
+          var new_item=items[randItemIndex];
+
+          if(!item) item=new_item;
+
+          items=items.filter(function(i)
+          {
+              return !i.equals(item);
+          });
+
+          items.push(item);
+
+          return new_item.clone();
+        }
         /*####################### Starting a pausing and overing the game #############*/
         /**
         *The Game has the Foillowing Status
