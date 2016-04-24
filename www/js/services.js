@@ -67,10 +67,7 @@ module.factory('Game', function($interval)
           //var marked=game.check_columns(ij.i,ij.j)
           if(game.checkGrid())
           {
-            do
-            {
-              game.remove_deleted_items();
-            }while(game.checkGrid())  
+            game.remove_deleted_items();
           }
           else
           {
@@ -218,7 +215,7 @@ module.factory('Game', function($interval)
                 }
               }
               game.addScore(1);
-              values[0][j]= game.randomItem(values[0][j]);//Replace the item with the new one
+              values[0][j]= game.randomItem(0,j,values[0][j]);//Replace the item with the new one
             }
           });
         }
@@ -362,7 +359,7 @@ module.factory('Game', function($interval)
               {
                 var randItemIndex=Math.floor(Math.random() * (items.length-2));
                 if(typeof game.grid.value[i]=== 'undefined') game.grid.value[i]=[];//Sometimes we get Undefined array
-                game.grid.value[i][j]=game.randomItem();//Not sure if I directly set it it will deep copy the object\
+                game.grid.value[i][j]=game.randomItem(i,j);//Not sure if I directly set it it will deep copy the object\
 
                 /*Each time remove athe selected item and put it on the back*/
                 // var item=items[randItemIndex];
@@ -391,7 +388,7 @@ module.factory('Game', function($interval)
         *
         * @return {Object} with the random item
         */
-        game.randomItem=function(item)
+        game.randomItem=function(i,j,item)
         {
           var randItemIndex=Math.floor(Math.random() * (items.length-2));
 
@@ -406,7 +403,7 @@ module.factory('Game', function($interval)
 
           items.push(item);
 
-          return new_item.clone();
+          return new_item.clone(i,j);
         }
         /*####################### Starting a pausing and overing the game #############*/
         /**
@@ -437,16 +434,16 @@ module.factory('Game', function($interval)
           {
             started=true;
             //Better to Use Angular's Interval
-            interval=$interval(function()
-            {
-              if(game.status==='play')
-              {
-                game.timer.value--;
-                console.log(game.timer.value);
-
-                if(game.timer.value==0) game.over();
-              }
-            },1000);
+            // interval=$interval(function()
+            // {
+            //   if(game.status==='play')
+            //   {
+            //     game.timer.value--;
+            //     console.log(game.timer.value);
+            //
+            //     if(game.timer.value==0) game.over();
+            //   }
+            // },1000);
           }
         }
 
@@ -564,7 +561,11 @@ module.factory('Game', function($interval)
         item.icon_destroyed=icon_destroyed;//Icon if the item is Destroyed
         item.icon_marked=icon_marked;//Icon when the item is selected
 
-        item.unique=(unique)?unique:0;//A unique number for new items
+        item.unique='xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c)
+        {
+            var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+            return v.toString(16);
+        });;//A unique number for new items
 
         /*
         *A Characteristic name of the itemYourFactory
@@ -598,10 +599,9 @@ module.factory('Game', function($interval)
         /**
         *Clone the Object (used for Initialization)
         */
-        item.clone=function()
+        item.clone=function(i,j)
         {
-           var newClone=new GameItem(item.icon,item.icon_destroyed,item.icon_marked,item.name,item.unique);
-           item.unique++;//After a clone refresh the unique number in order the next clones to have new name
+           var newClone=new GameItem(item.icon,item.icon_destroyed,item.icon_marked,item.name,i*10+j);
            return newClone;
         }
 
