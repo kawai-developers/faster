@@ -104,7 +104,7 @@ module.factory('Game', function($interval)
               if(item.uniqueId()===unique)
               {
                 if(typeof callback === 'function') callback(i,j,item);
-                return {i,j};
+                return {'i':i,'j':j};
               }
             }
           }
@@ -127,7 +127,7 @@ module.factory('Game', function($interval)
               if(item.uniqueId()===unique)
               {
                 game.swap(i,j,direction);
-                return {i,j};
+                return {'i':i,'j':j};
               }
             }
           }
