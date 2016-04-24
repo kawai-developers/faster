@@ -67,7 +67,10 @@ module.factory('Game', function($interval)
           //var marked=game.check_columns(ij.i,ij.j)
           if(game.checkGrid())
           {
-            game.remove_deleted_items();
+            do
+            {
+              game.remove_deleted_items();
+            }while(game.checkGrid())  
           }
           else
           {
@@ -215,7 +218,7 @@ module.factory('Game', function($interval)
                 }
               }
               game.addScore(1);
-              values[0][j]= game.randomItem();//Replace the item with the new one
+              values[0][j]= game.randomItem(values[0][j]);//Replace the item with the new one
             }
           });
         }
