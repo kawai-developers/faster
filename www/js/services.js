@@ -71,10 +71,10 @@ module.factory('Game', function($interval)
             //var marked=game.check_columns(ij.i,ij.j)
             if(game.checkGrid())
             {
-              //do
-              //{
+              do
+              {
                 game.remove_deleted_items();
-              //}while(game.checkGrid())
+              }while(game.checkGrid())
             }
             else
             {
