@@ -54,7 +54,7 @@ module.factory('Game', function($interval)
 
         /*############# Functions and methods that perfrorm the swap of the elements and have the main gameplay logic #############*/
 
-        game.checking=false;
+        var swapping=false;
         /**
         *Function that does the swap of an element
         *@param unique {Stirng} Thye Unique Id of the element
@@ -62,24 +62,26 @@ module.factory('Game', function($interval)
         */
         game.swapCheck=function(unique,direction)
         {
-          if(game.checking) return;
-          game.checking=true;
-          var ij=game.swapById(unique,direction);
-          var opposite=opposite_direction(direction);
+          if(!swapping)
+          {
+            swapping=true;
+            var ij=game.swapById(unique,direction);
+            var opposite=opposite_direction(direction);
 
-          //var marked=game.check_columns(ij.i,ij.j)
-          if(game.checkGrid())
-          {
-            // do
-            // {
-              game.remove_deleted_items();
-            // } while (game.checkGrid());
+            //var marked=game.check_columns(ij.i,ij.j)
+            if(game.checkGrid())
+            {
+              //do
+              //{
+                game.remove_deleted_items();
+              //}while(game.checkGrid())
+            }
+            else
+            {
+              game.swap(ij.i,ij.j,opposite);
+            }
+            swapping=false;
           }
-          else
-          {
-            game.swap(ij.i,ij.j,opposite);
-          }
-          game.checking=false;
         }
 
         /**
@@ -111,7 +113,7 @@ module.factory('Game', function($interval)
               if(item.uniqueId()===unique)
               {
                 if(typeof callback === 'function') callback(i,j,item);
-                return {i,j};
+                return {'i':i,'j':j};
               }
             }
           }
@@ -367,16 +369,23 @@ module.factory('Game', function($interval)
                 var randItemIndex=Math.floor(Math.random() * (items.length-2));
                 if(typeof game.grid.value[i]=== 'undefined') game.grid.value[i]=[];//Sometimes we get Undefined array
                 game.grid.value[i][j]=game.randomItem();//Not sure if I directly set it it will deep copy the object\
+
+                /*Each time remove athe selected item and put it on the back*/
+                // var item=items[randItemIndex];
+                // items=items.filter(function(i)
+                // {
+                //   	return !i.equals(item);
+                // });
+                //
+                // items.push(item);
+                /*End of: "Each time remove athe selected item and put it on the back"*/
               }
             }
           }
-
+          console.log(game.grid);
           /*End of: "Generate grid randomly"*/
 
-          game.checking=false;
-
           if(typeof game.callbacks === 'object' && typeof game.callbacks['afterInit'] === 'function') game.callbacks['afterInit'](game);
-
           game.play();
         }
 
@@ -402,16 +411,11 @@ module.factory('Game', function($interval)
         {
           var randItemIndex=Math.floor(Math.random() * (items.length-2));
 
+          if(item) move_item_to_back(item)
+
           var new_item=items[randItemIndex];
 
-          if(!item) item=new_item;
-
-          items=items.filter(function(i)
-          {
-              return !i.equals(item);
-          });
-
-          items.push(item);
+          move_item_to_back(new_item);
 
           return new_item.clone();
         }
