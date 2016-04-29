@@ -54,6 +54,7 @@ module.factory('Game', function($interval)
 
         /*############# Functions and methods that perfrorm the swap of the elements and have the main gameplay logic #############*/
 
+        game.checking=false;
         /**
         *Function that does the swap of an element
         *@param unique {Stirng} Thye Unique Id of the element
@@ -61,18 +62,24 @@ module.factory('Game', function($interval)
         */
         game.swapCheck=function(unique,direction)
         {
+          if(game.checking) return;
+          game.checking=true;
           var ij=game.swapById(unique,direction);
           var opposite=opposite_direction(direction);
 
           //var marked=game.check_columns(ij.i,ij.j)
           if(game.checkGrid())
           {
-            game.remove_deleted_items();
+            // do
+            // {
+              game.remove_deleted_items();
+            // } while (game.checkGrid());
           }
           else
           {
             game.swap(ij.i,ij.j,opposite);
           }
+          game.checking=false;
         }
 
         /**
@@ -104,7 +111,7 @@ module.factory('Game', function($interval)
               if(item.uniqueId()===unique)
               {
                 if(typeof callback === 'function') callback(i,j,item);
-                return {'i':i,'j':j};
+                return {i,j};
               }
             }
           }
@@ -215,7 +222,7 @@ module.factory('Game', function($interval)
                 }
               }
               game.addScore(1);
-              values[0][j]=random_item();//Replace the item with the new one
+              values[0][j]= game.randomItem(values[0][j]);//Replace the item with the new one
             }
           });
         }
@@ -340,13 +347,6 @@ module.factory('Game', function($interval)
 
         /*########################################################################################################################*/
 
-
-        var random_item=function()
-        {
-          var randItemIndex=Math.floor(Math.random() * (items.length-1));
-          return items[randItemIndex].clone();//Not sure if I directly set it it will deep copy the object
-        }
-
         /**
         *Method that Initialises and starts the game
         *Why I used this function and not game.start()
@@ -366,27 +366,55 @@ module.factory('Game', function($interval)
               {
                 var randItemIndex=Math.floor(Math.random() * (items.length-2));
                 if(typeof game.grid.value[i]=== 'undefined') game.grid.value[i]=[];//Sometimes we get Undefined array
-                game.grid.value[i][j]=items[randItemIndex].clone();//Not sure if I directly set it it will deep copy the object\
-
-                /*Each time remove athe selected item and put it on the back*/
-                var item=items[randItemIndex];
-                items=items.filter(function(i)
-                {
-                  	return !i.equals(item);
-                });
-
-                items.push(item);
-                /*End of: "Each time remove athe selected item and put it on the back"*/
+                game.grid.value[i][j]=game.randomItem();//Not sure if I directly set it it will deep copy the object\
               }
             }
           }
-          console.log(game.grid);
+
           /*End of: "Generate grid randomly"*/
 
+          game.checking=false;
+
           if(typeof game.callbacks === 'object' && typeof game.callbacks['afterInit'] === 'function') game.callbacks['afterInit'](game);
+
           game.play();
         }
 
+        var move_item_to_back=function(item)
+        {
+          items=items.filter(function(i)
+          {
+            return !i.equals(item);
+          });
+
+          items.push(item);
+        }
+
+        /**
+        * Creates a random Item
+        *
+        * @param item {Object} If item specified it is moved to the end.
+        *                      Otherwise is moved the random item to the end
+        *
+        * @return {Object} with the random item
+        */
+        game.randomItem=function(item)
+        {
+          var randItemIndex=Math.floor(Math.random() * (items.length-2));
+
+          var new_item=items[randItemIndex];
+
+          if(!item) item=new_item;
+
+          items=items.filter(function(i)
+          {
+              return !i.equals(item);
+          });
+
+          items.push(item);
+
+          return new_item.clone();
+        }
         /*####################### Starting a pausing and overing the game #############*/
         /**
         *The Game has the Foillowing Status
@@ -416,16 +444,16 @@ module.factory('Game', function($interval)
           {
             started=true;
             //Better to Use Angular's Interval
-            interval=$interval(function()
-            {
-              if(game.status==='play')
-              {
-                game.timer.value--;
-                console.log(game.timer.value);
-
-                if(game.timer.value==0) game.over();
-              }
-            },1000);
+            // interval=$interval(function()
+            // {
+            //   if(game.status==='play')
+            //   {
+            //     game.timer.value--;
+            //     console.log(game.timer.value);
+            //
+            //     if(game.timer.value==0) game.over();
+            //   }
+            // },1000);
           }
         }
 
@@ -535,7 +563,7 @@ module.factory('Game', function($interval)
       *@param icon_marked {String} Icon when The Item is Maked dfor checking (it can be either html or image path)
       *@param unique {Int} A Unique number that determines the element
       */
-      function GameItem(icon,icon_destroyed,icon_marked,name,unique)
+      function GameItem(icon,icon_destroyed,icon_marked,name)
       {
         var item=this;
 
@@ -543,7 +571,11 @@ module.factory('Game', function($interval)
         item.icon_destroyed=icon_destroyed;//Icon if the item is Destroyed
         item.icon_marked=icon_marked;//Icon when the item is selected
 
-        item.unique=(unique)?unique:0;//A unique number for new items
+        item.unique='xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c)
+        {
+          var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+          return v.toString(16);
+        });//A unique number for new items
 
         /*
         *A Characteristic name of the itemYourFactory
@@ -580,7 +612,7 @@ module.factory('Game', function($interval)
         item.clone=function()
         {
            var newClone=new GameItem(item.icon,item.icon_destroyed,item.icon_marked,item.name,item.unique);
-           item.unique++;//After a clone refresh the unique number in order the next clones to have new name
+
            return newClone;
         }
 
