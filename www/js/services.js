@@ -202,6 +202,13 @@ module.factory('Game', function($interval)
           }
         };
 
+        /**
+        *Method that swaps an element to a new position
+        * @param i {Int} The row  of the element
+        * @param j {Int} The column of the element
+        * @param newi {Int} The new row of the element
+        * @param newj {Int} The new column of the element
+        */
         var swapAction=function(i,j,newi,newj)
         {
           var temp=game.grid.value[i][j];
@@ -209,13 +216,20 @@ module.factory('Game', function($interval)
           game.grid.value[newi][newj]=temp;
         }
 
-        game.remove_deleted_items=function()
+
+
+        /**
+        *Function that moves deleted items on the top
+        */
+        var move_items_on_the_top=function()
         {
+          var deleted_items=[];
           game.grid.loopItems(function(item,i,j,values)
           {
             console.log(item.status);
-            if(item.status==='destroyed')
+            if(item.status==='deleted')
             {
+              item.status='destroyed'
               if(i!==0)
               {
                 for(var k=i;k>=0;k--)
@@ -223,11 +237,28 @@ module.factory('Game', function($interval)
                   game.swapById(item.uniqueId(),'up')
                 }
               }
-              game.addScore(1);
-              values[0][j]= game.randomItem(values[0][j]);//Replace the item with the new one
+              //game.addScore(1);
+              //values[0][j]= game.randomItem(values[0][j]);//Replace the item with the new one
+              deleted_items.push({'i':0,'j':j});
             }
           });
+          return deleted_items;
         }
+
+
+        game.remove_deleted_items=function()
+        {
+          var deleted=move_items_on_the_top();
+
+          game.grid.loopItems(function(item,i,j,values)
+          {
+            console.log(item.status);
+            if(item.status==='destroyed')
+            {
+              values[i][j]= game.randomItem(values[i][j]);//Replace the item with the new one
+            }
+          });
+        };
 
         /**
         *Check if item i,j has same elements in the same column
@@ -331,13 +362,13 @@ module.factory('Game', function($interval)
           var delete_rows=(rows.length>=3);
           rows.forEach(function(item)
           {
-            item.status=(delete_rows)?'destroyed':'start';
+            item.status=(delete_rows)?'deleted':'start';
           });
 
           var delete_columns=(columns.length>=3);
           columns.forEach(function(item)
           {
-            item.status=(delete_columns)?'destroyed':'start';
+            item.status=(delete_columns)?'deleted':'start';
           });
 
           console.log(game.grid.value[i][j].uniqueId(),rows,columns,delete_rows,delete_columns);
@@ -579,7 +610,7 @@ module.factory('Game', function($interval)
         {
           var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
           return v.toString(16);
-        });//A unique number for new items
+        });//A uuid for new items
 
         /*
         *A Characteristic name of the itemYourFactory
