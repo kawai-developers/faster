@@ -1,7 +1,7 @@
 {
   "name": "faster",
   "version": "1.1.1",
-  "description": "Faster: An Ionic project",
+  "description": "Faster: An application in order to make bus routes more happpy",
   "dependencies": {
     "gulp": "^3.5.6",
     "gulp-sass": "^2.0.4",
