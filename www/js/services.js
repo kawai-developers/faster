@@ -394,25 +394,25 @@ module.factory('Game', function($interval)
           points.value=0;
 
           /*Generate grid randomly*/
-          // if(angular.isArray(items)) //check if array
-          // {
-          //   for(i=0;i<grid_width;i++)
-          //   {
-          //     for(j=0;j<grid_height;j++)
-          //     {
-          //       // var randItemIndex=Math.floor(Math.random() * (items.length-2));
-          //       // if(typeof game.grid.value[i]=== 'undefined') game.grid.value[i]=[];//Sometimes we get Undefined array
-          //       // game.grid.value[i][j]=game.randomItem();//Not sure if I directly set it it will deep copy the object\
-          //     }
-          //   }
-          // }
+          if(angular.isArray(items)) //check if array
+          {
+            for(i=0;i<grid_width;i++)
+            {
+              for(j=0;j<grid_height;j++)
+              {
+                var randItemIndex=Math.floor(Math.random() * (items.length-2));
+                if(typeof game.grid.value[i]=== 'undefined') game.grid.value[i]=[];//Sometimes we get Undefined array
+                game.grid.value[i][j]=game.randomItem();//Not sure if I directly set it it will deep copy the object\
+              }
+            }
+          }
 
-          game.grid.value=[
-                            [items[0].clone(),items[1].clone(),items[0].clone(),items[2].clone(),items[2].clone(),],
-                            [items[1].clone(),items[0].clone(),items[2].clone(),items[0].clone(),items[1].clone(),],
-                            [items[0].clone(),items[3].clone(),items[3].clone(),items[2].clone(),items[1].clone(),],
-                            [items[0].clone(),items[1].clone(),items[0].clone(),items[3].clone(),items[0].clone(),],
-                          ];
+          // game.grid.value=[
+          //                   [items[0].clone(),items[1].clone(),items[0].clone(),items[2].clone(),items[2].clone(),],
+          //                   [items[1].clone(),items[0].clone(),items[2].clone(),items[0].clone(),items[1].clone(),],
+          //                   [items[0].clone(),items[3].clone(),items[3].clone(),items[2].clone(),items[1].clone(),],
+          //                   [items[0].clone(),items[1].clone(),items[0].clone(),items[3].clone(),items[0].clone(),],
+          //                 ];
           /*End of: "Generate grid randomly"*/
 
           if(typeof game.callbacks === 'object' && typeof game.callbacks['afterInit'] === 'function') game.callbacks['afterInit'](game);
@@ -479,16 +479,16 @@ module.factory('Game', function($interval)
           {
             started=true;
             //Better to Use Angular's Interval
-            // interval=$interval(function()
-            // {
-            //   if(game.status==='play')
-            //   {
-            //     game.timer.value--;
-            //     console.log(game.timer.value);
-            //
-            //     if(game.timer.value==0) game.over();
-            //   }
-            // },1000);
+            interval=$interval(function()
+            {
+              if(game.status==='play')
+              {
+                game.timer.value--;
+                console.log(game.timer.value);
+
+                if(game.timer.value==0) game.over();
+              }
+            },1000);
           }
         }
 
@@ -514,7 +514,7 @@ module.factory('Game', function($interval)
         {
           game.status='paused';
           if(typeof game.callbacks === 'object' && typeof game.callbacks['pause'] === 'function') game.callbacks['pause'](game.timer);
-          //stopTimer();
+          stopTimer();
         }
 
 

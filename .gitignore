@@ -7,3 +7,7 @@ resources
 .profile
 .editorconfig
 node_modules
+*.files
+*.config
+*.creator
+
