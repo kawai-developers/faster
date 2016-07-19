@@ -10,3 +10,7 @@ node_modules
 plugins/ubuntu.json
 Faster/Faster.desktop
 Faster/Faster.ubuntuhtmlproject
+*.files
+*.config
+*.creator
+

@@ -54,6 +54,7 @@ module.factory('Game', function($interval)
 
         /*############# Functions and methods that perfrorm the swap of the elements and have the main gameplay logic #############*/
 
+        var swapping=false;
         /**
         *Function that does the swap of an element
         *@param unique {Stirng} Thye Unique Id of the element
@@ -61,17 +62,20 @@ module.factory('Game', function($interval)
         */
         game.swapCheck=function(unique,direction)
         {
-          var ij=game.swapById(unique,direction);
-          var opposite=opposite_direction(direction);
+          if(!swapping)
+          {
+            swapping=true;
+            var ij=game.swapById(unique,direction);
+            var opposite=opposite_direction(direction);
 
-          //var marked=game.check_columns(ij.i,ij.j)
-          if(game.checkGrid())
-          {
-            game.remove_deleted_items();
-          }
-          else
-          {
-            game.swap(ij.i,ij.j,opposite);
+            if(!game.check(ij.i,ij.j))
+            {
+              game.swap(ij.i,ij.j,opposite);
+            }
+
+            if(game.checkGrid()) game.remove_deleted_items();
+
+            swapping=false;
           }
         }
 
@@ -87,7 +91,7 @@ module.factory('Game', function($interval)
             var marked2=game.check(i,j);
             marked=marked||marked2;
           });
-          console.log(marked);
+
           return marked;
         };
 
@@ -104,7 +108,7 @@ module.factory('Game', function($interval)
               if(item.uniqueId()===unique)
               {
                 if(typeof callback === 'function') callback(i,j,item);
-                return {i,j};
+                return {'i':i,'j':j};
               }
             }
           }
@@ -127,7 +131,7 @@ module.factory('Game', function($interval)
               if(item.uniqueId()===unique)
               {
                 game.swap(i,j,direction);
-                return {i,j};
+                return {'i':i,'j':j};
               }
             }
           }
@@ -193,6 +197,13 @@ module.factory('Game', function($interval)
           }
         };
 
+        /**
+        *Method that swaps an element to a new position
+        * @param i {Int} The row  of the element
+        * @param j {Int} The column of the element
+        * @param newi {Int} The new row of the element
+        * @param newj {Int} The new column of the element
+        */
         var swapAction=function(i,j,newi,newj)
         {
           var temp=game.grid.value[i][j];
@@ -200,13 +211,20 @@ module.factory('Game', function($interval)
           game.grid.value[newi][newj]=temp;
         }
 
-        game.remove_deleted_items=function()
+
+
+        /**
+        *Function that moves deleted items on the top
+        */
+        var move_items_on_the_top=function()
         {
+          var deleted_items=[];
           game.grid.loopItems(function(item,i,j,values)
           {
             console.log(item.status);
-            if(item.status==='destroyed')
+            if(item.status==='deleted')
             {
+              item.status='destroyed'
               if(i!==0)
               {
                 for(var k=i;k>=0;k--)
@@ -214,32 +232,50 @@ module.factory('Game', function($interval)
                   game.swapById(item.uniqueId(),'up')
                 }
               }
-              game.addScore(1);
-              values[0][j]= game.randomItem(0,j,values[0][j]);//Replace the item with the new one
+              //game.addScore(1);
+              values[0][j]= game.randomItem(values[0][j]);//Replace the item with the new one
+              deleted_items.push({'i':0,'j':j});
             }
           });
+          return deleted_items;
         }
+
+
+        game.remove_deleted_items=function()
+        {
+          var deleted=move_items_on_the_top();
+
+          game.grid.loopItems(function(item,i,j,values)
+          {
+            console.log(item.status);
+            if(item.status==='destroyed')
+            {
+              values[i][j]= game.randomItem(values[i][j]);//Replace the item with the new one
+            }
+          });
+        };
 
         /**
         *Check if item i,j has same elements in the same column
         */
-        game.check_columns=function(i,j)
+        game.check_rows=function(i,j)
         {
           var item=game.grid.value[i][j];
           item.status="marked";
-
-          var checked_columns=[item];//Store the checked items
+          item.ij={'i':i,'j':j};
+          var checked_columns=[];//Store the checked items
 
           //Check elements before
           if(i!==0)
           {
-            for(var i1=i;i1>0;i1--)
+            for(var i1=i;i1>=0;i1--)
             {
               var item2=game.grid.value[i1][j]
-              if(item.equals(item2))
+              if(item.equals(item2) && !checked_columns.includes(item2))
               {
                 item2.status="marked";
                 checked_columns.push(item2);
+                item2.ij={'i':i1,'j':j};
               }
               else
               {
@@ -248,17 +284,19 @@ module.factory('Game', function($interval)
             }
           }
 
-          /*Check columns*/
           for(var i1=i;i1<game.grid.value.length;i1++)
           {
             var item2=game.grid.value[i1][j]
-            if(item.equals(item2))
+            if(item.equals(item2) && !checked_columns.includes(item2))
             {
               item2.status="marked";
               checked_columns.push(item2);
             }
+            else
+            {
+                break;
+            }
           }
-          /*End of: Check columns*/
 
           return checked_columns;
         }
@@ -266,23 +304,24 @@ module.factory('Game', function($interval)
         /**
         *Check if item i,j has same elements in the same row
         */
-        game.check_rows=function(i,j)
+        game.check_columns=function(i,j)
         {
           var item=game.grid.value[i][j];
           item.status="marked";
 
           var checked_rows=[item];//Store the checked items
 
-          /*Check columns*/
           if(j!==0)
           {
+            console.log("Here");
             for(var j1=j;j1>=0;j1--)
             {
               var item2=game.grid.value[i][j1];
-              if(item.equals(item2))
+              if(item.equals(item2) /*&& !checked_rows.includes(item2)*/)
               {
                 item2.status="marked";
                 checked_rows.push(item2);
+                console.log("Item checked ",i,j,game.grid.value[i][j],"\nItem compare",i,j1,item2);
               }
               else
               {
@@ -291,20 +330,24 @@ module.factory('Game', function($interval)
             }
           }
 
+
           for(var j1=j;j1<game.grid.value[i].length;j1++)
           {
+
             var item2=game.grid.value[i][j1]
-            if(item.equals(item2))
+
+            if(item.equals(item2)&& !checked_rows.includes(item2))
             {
               item2.status="marked";
               checked_rows.push(item2);
+              console.log("Item checked ",i,j,game.grid.value[i][j],"\nItem compare",i,j1,item2);
             }
             else
             {
               break;
             }
           }
-          /*End of: Check columns*/
+          console.log(checked_rows);
 
           return checked_rows;
         }
@@ -312,28 +355,28 @@ module.factory('Game', function($interval)
 
         /**
         *Perform a check if item in i,j position has the same rows & columns
-        *@return {array} Wuth the items to delete
+        *@return {array} With the items to delete
         */
         game.check=function(i,j)
         {
-          var rows=unique_array(game.check_rows(i,j));
-          var columns=unique_array(game.check_columns(i,j));
+          var rows=unique_array(game.check_rows(i,j),'unique');
+          var columns=unique_array(game.check_columns(i,j),'unique');
 
-          var delete_rows=(rows.length>=3);
+          var delete_rows=(rows.length!==1 && rows.length>=3);
           rows.forEach(function(item)
           {
-            item.status=(delete_rows)?'destroyed':'start';
+            item.status=(delete_rows|| item.status==='deleted')?'deleted':'start';
           });
 
-          var delete_columns=(columns.length>=3);
+          var delete_columns=(columns.length!==1 && columns.length>=3);
           columns.forEach(function(item)
           {
-            item.status=(delete_columns)?'destroyed':'start';
+            item.status=(delete_columns || item.status==='deleted')?'deleted':'start';
           });
 
-          console.log(game.grid.value[i][j].uniqueId(),rows,columns,delete_rows,delete_columns);
-
           var status=delete_columns||delete_rows;
+
+          if(!status) game.grid.value[i][j].status='start';
 
           return status;
         };
@@ -343,7 +386,7 @@ module.factory('Game', function($interval)
         /**
         *Method that Initialises and starts the game
         *Why I used this function and not game.start()
-        *is because this way the code for initializing the grid is saparate from the code that initialises the clock
+        *is because this way the code for initializing the grid is separate from the code that initialises the clock
         */
         game.init=function()
         {
@@ -359,25 +402,31 @@ module.factory('Game', function($interval)
               {
                 var randItemIndex=Math.floor(Math.random() * (items.length-2));
                 if(typeof game.grid.value[i]=== 'undefined') game.grid.value[i]=[];//Sometimes we get Undefined array
-                game.grid.value[i][j]=game.randomItem(i,j);//Not sure if I directly set it it will deep copy the object\
-
-                /*Each time remove athe selected item and put it on the back*/
-                // var item=items[randItemIndex];
-                // items=items.filter(function(i)
-                // {
-                //   	return !i.equals(item);
-                // });
-                //
-                // items.push(item);
-                /*End of: "Each time remove athe selected item and put it on the back"*/
+                game.grid.value[i][j]=game.randomItem();//Not sure if I directly set it it will deep copy the object\
               }
             }
           }
-          console.log(game.grid);
+
+          // game.grid.value=[
+          //                   [items[0].clone(),items[1].clone(),items[0].clone(),items[2].clone(),items[2].clone(),],
+          //                   [items[1].clone(),items[0].clone(),items[2].clone(),items[0].clone(),items[1].clone(),],
+          //                   [items[0].clone(),items[3].clone(),items[3].clone(),items[2].clone(),items[1].clone(),],
+          //                   [items[0].clone(),items[1].clone(),items[0].clone(),items[3].clone(),items[0].clone(),],
+          //                 ];
           /*End of: "Generate grid randomly"*/
 
           if(typeof game.callbacks === 'object' && typeof game.callbacks['afterInit'] === 'function') game.callbacks['afterInit'](game);
           game.play();
+        }
+
+        var move_item_to_back=function(item)
+        {
+          items=items.filter(function(i)
+          {
+            return !i.equals(item);
+          });
+
+          items.push(item);
         }
 
         /**
@@ -388,23 +437,19 @@ module.factory('Game', function($interval)
         *
         * @return {Object} with the random item
         */
-        game.randomItem=function(i,j,item)
+        game.randomItem=function(item)
         {
           var randItemIndex=Math.floor(Math.random() * (items.length-2));
 
+          if(item) move_item_to_back(item)
+
           var new_item=items[randItemIndex];
 
-          if(!item) item=new_item;
+          move_item_to_back(new_item);
 
-          items=items.filter(function(i)
-          {
-              return !i.equals(item);
-          });
-
-          items.push(item);
-
-          return new_item.clone(i,j);
+          return new_item.clone();
         }
+
         /*####################### Starting a pausing and overing the game #############*/
         /**
         *The Game has the Foillowing Status
@@ -434,16 +479,16 @@ module.factory('Game', function($interval)
           {
             started=true;
             //Better to Use Angular's Interval
-            // interval=$interval(function()
-            // {
-            //   if(game.status==='play')
-            //   {
-            //     game.timer.value--;
-            //     console.log(game.timer.value);
-            //
-            //     if(game.timer.value==0) game.over();
-            //   }
-            // },1000);
+            interval=$interval(function()
+            {
+              if(game.status==='play')
+              {
+                game.timer.value--;
+                console.log(game.timer.value);
+
+                if(game.timer.value==0) game.over();
+              }
+            },1000);
           }
         }
 
@@ -469,7 +514,7 @@ module.factory('Game', function($interval)
         {
           game.status='paused';
           if(typeof game.callbacks === 'object' && typeof game.callbacks['pause'] === 'function') game.callbacks['pause'](game.timer);
-          //stopTimer();
+          stopTimer();
         }
 
 
@@ -553,7 +598,7 @@ module.factory('Game', function($interval)
       *@param icon_marked {String} Icon when The Item is Maked dfor checking (it can be either html or image path)
       *@param unique {Int} A Unique number that determines the element
       */
-      function GameItem(icon,icon_destroyed,icon_marked,name,unique)
+      function GameItem(icon,icon_destroyed,icon_marked,name)
       {
         var item=this;
 
@@ -563,9 +608,9 @@ module.factory('Game', function($interval)
 
         item.unique='xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c)
         {
-            var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
-            return v.toString(16);
-        });;//A unique number for new items
+          var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+          return v.toString(16);
+        });//A uuid for each new instance of a class
 
         /*
         *A Characteristic name of the itemYourFactory
@@ -577,6 +622,7 @@ module.factory('Game', function($interval)
         *For now takes 2 values:
         *start if the Item is not destroyed
         *marked if on swap tha item was marked for deletion
+        *deleted if the item has 3 or more equal items in the same row or column
         *destroyed if the item in destroyed
         *whatever else for status you want
         */
@@ -599,9 +645,10 @@ module.factory('Game', function($interval)
         /**
         *Clone the Object (used for Initialization)
         */
-        item.clone=function(i,j)
+        item.clone=function()
         {
-           var newClone=new GameItem(item.icon,item.icon_destroyed,item.icon_marked,item.name,i*10+j);
+           var newClone=new GameItem(item.icon,item.icon_destroyed,item.icon_marked,item.name,item.unique);
+
            return newClone;
         }
 
@@ -671,7 +718,6 @@ module.factory('MenuItem',function($state)
     */
    function MenuItem(name,class_,icon,icon_font,clickFunction)
    {
-     console.log("Item Made");
       var item=this;
       item.name_=name;
       item.class=class_;
