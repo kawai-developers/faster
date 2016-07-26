@@ -43,7 +43,7 @@ module.factory('Game', function($interval)
                         for(var j=0;j<game.grid.value[i].length;j++)
                         {
                           var item=game.grid.value[i][j];
-                          callback(item,i,j,this.value);
+                          callback(item,i,j,this.value,game);
                         }
                       }
                     }
@@ -169,28 +169,28 @@ module.factory('Game', function($interval)
             case 'up':
               if(i!==0) //Cannot swap first line elements
               {
-                console.log("Can swap Up");
+                //console.log("Can swap Up");
                 swapAction(i,j,i-1,j);
               }
               break;
             case 'down':
               if(i!==game.grid.value.length-1) //cannot swap last line elements
               {
-                console.log("Can swap Down");
+                //console.log("Can swap Down");
                 swapAction(i,j,i+1,j);
               }
               break;
             case 'left':
               if(j!==0) //Cannot swap first column elements
               {
-                console.log("Can swap Left");
+                //console.log("Can swap Left");
                 swapAction(i,j,i,j-1);
               }
               break;
             case 'right':
               if(j!==game.grid.value[i].length-1) //Cannot swap last column elements
               {
-                console.log("Can swap Right");
+                //console.log("Can swap Right");
                 swapAction(i,j,i,j+1);
               }
               break;
@@ -221,7 +221,7 @@ module.factory('Game', function($interval)
           var deleted_items=[];
           game.grid.loopItems(function(item,i,j,values)
           {
-            console.log(item.status);
+            //console.log(item.status);
             if(item.status==='deleted')
             {
               item.status='destroyed'
@@ -232,7 +232,6 @@ module.factory('Game', function($interval)
                   game.swapById(item.uniqueId(),'up')
                 }
               }
-              //game.addScore(1);
               values[0][j]= game.randomItem(values[0][j]);//Replace the item with the new one
               deleted_items.push({'i':0,'j':j});
             }
@@ -245,12 +244,14 @@ module.factory('Game', function($interval)
         {
           var deleted=move_items_on_the_top();
 
-          game.grid.loopItems(function(item,i,j,values)
+          game.grid.loopItems(function(item,i,j,values,game)
           {
             console.log(item.status);
             if(item.status==='destroyed')
             {
+              console.log("Δαμέ");
               values[i][j]= game.randomItem(values[i][j]);//Replace the item with the new one
+              game.addScore(1);
             }
           });
         };
@@ -313,7 +314,7 @@ module.factory('Game', function($interval)
 
           if(j!==0)
           {
-            console.log("Here");
+            //console.log("Here");
             for(var j1=j;j1>=0;j1--)
             {
               var item2=game.grid.value[i][j1];
@@ -321,7 +322,7 @@ module.factory('Game', function($interval)
               {
                 item2.status="marked";
                 checked_rows.push(item2);
-                console.log("Item checked ",i,j,game.grid.value[i][j],"\nItem compare",i,j1,item2);
+                //console.log("Item checked ",i,j,game.grid.value[i][j],"\nItem compare",i,j1,item2);
               }
               else
               {
@@ -340,14 +341,14 @@ module.factory('Game', function($interval)
             {
               item2.status="marked";
               checked_rows.push(item2);
-              console.log("Item checked ",i,j,game.grid.value[i][j],"\nItem compare",i,j1,item2);
+              //console.log("Item checked ",i,j,game.grid.value[i][j],"\nItem compare",i,j1,item2);
             }
             else
             {
               break;
             }
           }
-          console.log(checked_rows);
+          //console.log(checked_rows);
 
           return checked_rows;
         }
@@ -391,7 +392,7 @@ module.factory('Game', function($interval)
         game.init=function()
         {
           game.timer.value=time;
-          points.value=0;
+          game.points.value=0;
 
           /*Generate grid randomly*/
           if(angular.isArray(items)) //check if array
@@ -484,7 +485,7 @@ module.factory('Game', function($interval)
               if(game.status==='play')
               {
                 game.timer.value--;
-                console.log(game.timer.value);
+                //console.log(game.timer.value);
 
                 if(game.timer.value==0) game.over();
               }
@@ -524,7 +525,7 @@ module.factory('Game', function($interval)
         */
         game.play=function()
         {
-          console.log("Game Started");
+          //console.log("Game Started");
           game.status='play';
           //Start the counter
           startTimer();
@@ -558,28 +559,30 @@ module.factory('Game', function($interval)
         /*##############################################################################*/
 
         /*######################### For Scoring system #######################*/
-        var points={value:0};
+        game.points={value:0};
 
         game.addScore=function(points)
         {
-          points.value+=points;
+          console.log(points);
+          game.points.value+=points;
+          console.log("Helllo adding points");
         }
 
         game.removeScore=function(points)
         {
-          points.value-=points;
+          game.points.value-=points;
         }
 
         game.getScore=function()
         {
-          return points;
+          return game.points;
         }
         /*#####################################################################*/
 
         /*########### Functions for Game Saving and Loading ###################*/
         game.save=function()
         {
-          console.log("Game Saving");
+          //console.log("Game Saving");
           //Code for game saving
         }
 
