@@ -243,15 +243,21 @@ module.factory('Game', function($interval)
         game.remove_deleted_items=function()
         {
           var deleted=move_items_on_the_top();
+          if(deleted)
+          {
+            deleted.forEach(function()
+            {
+              game.addScore(1);
+            });
+          }
 
+          // I Loop through the grid because I want the i,j position for each item too.
           game.grid.loopItems(function(item,i,j,values,game)
           {
             console.log(item.status);
             if(item.status==='destroyed')
             {
-              console.log("Δαμέ");
               values[i][j]= game.randomItem(values[i][j]);//Replace the item with the new one
-              game.addScore(1);
             }
           });
         };
