@@ -232,7 +232,6 @@ module.factory('Game', function($interval)
                   game.swapById(item.uniqueId(),'up')
                 }
               }
-              values[0][j]= game.randomItem(values[0][j]);//Replace the item with the new one
               deleted_items.push({'i':0,'j':j});
             }
           });
@@ -247,7 +246,6 @@ module.factory('Game', function($interval)
           {
             deleted.forEach(function()
             {
-              game.addScore(1);
             });
           }
 
@@ -258,6 +256,7 @@ module.factory('Game', function($interval)
             if(item.status==='destroyed')
             {
               values[i][j]= game.randomItem(values[i][j]);//Replace the item with the new one
+              game.addScore(1);
             }
           });
         };
