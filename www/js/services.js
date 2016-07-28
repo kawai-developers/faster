@@ -739,7 +739,7 @@ module.factory('MenuItem',function($state)
    };
 
    var items={
-                'play': new MenuItem('Play','play-btn',"<i class=\"fa fa-play\"></i>",true,function()
+                'play': new MenuItem('Play','item-icon-right',"icon ion-play",true,function()
                 {
                   $state.go('game');
                 }),

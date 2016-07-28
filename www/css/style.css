@@ -1,14 +1,7 @@
 /* Empty. Add your own CSS if you like */
-h1	{color:#fff; font-size:1.6em;  position:absolute; margin:60px; 
+h1	{color:#fff; font-size:1.6em;  position:absolute; margin:60px;
 	padding-top: 10px; font-weight: 400;} /* gia to intro*/
 h2	{color: #EC0088; font-size:2.0em; font-weight: 400;		margin:0px; } /*ta koumpia!*/
-
-
-.center {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
 
 .text-center{
   text-alighn:center!important;
@@ -23,27 +16,27 @@ h2	{color: #EC0088; font-size:2.0em; font-weight: 400;		margin:0px; } /*ta koump
 	min-height:90%;
 	background-color:#0064A6;
 	color:#fff;
-	font-size:1.6em; 
-	margin:30px; 
+	font-size:1.6em;
+	margin:30px;
 	padding: 40px;
 	border-radius: 10px;
 	box-shadow: #004573 3px 3px 0px;
 
-	
+
 }
 
 .general_button {
-	background:transparent; 
-	border:none; 
-	cursor:pointer; 
-	outline:none; 
+	background:transparent;
+	border:none;
+	cursor:pointer;
+	outline:none;
 	display:block;
 	margin: auto;
 	position:relative;
 	box-shadow: #004573 3px 3px 0px;
 	background-color:#fff;
 	border-radius: 7px;
-	
+
 }
 
 .general_button:active {
